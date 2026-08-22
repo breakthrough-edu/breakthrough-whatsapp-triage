@@ -7,7 +7,7 @@ description: Turns an overwhelming WhatsApp backlog into a one-page daily action
 
 Read this file first, every time. It routes and it forbids. It does not carry procedures, those live in the files it points at, and when this file disagrees with one of them the specific file wins and you fix this one in the same session.
 
-## The nine rules
+## The ten rules
 
 These hold in every mode. Breaking one is a bug, not a judgement call.
 
@@ -20,6 +20,24 @@ These hold in every mode. Breaking one is a bug, not a judgement call.
 7. **Everything stays on this computer.** Never upload, post, or transmit the export, the digest, or the board. Never ask the user to paste their Android encryption key into the chat.
 8. **House style for everything the skill emits**, board copy and drafts included: no em dashes, no double hyphens, no spaced hyphens as separators. Commas, colons, periods, parentheses.
 9. **Scripts compute facts, you make judgements.** Never hand-parse epochs or JIDs, and never ask a script to decide what is urgent.
+10. **Read narrow by default, widen only when asked.** The window is **3 days**. Never widen it on your own initiative, not to be helpful, not because the board looked thin, not because the user seemed busy. Every extra day pulls more of someone's private life into this session, and that has to be their call, said out loud.
+
+## The window, and the sentence you must always say
+
+3 days is the default because it is the smallest window that still answers "what needs me today". On a heavy account it reads about 60 conversations instead of about 140, and roughly a quarter of the messages a week would.
+
+After every board, tell the user in one plain sentence:
+
+- the window you used and the date it reaches back to,
+- how many conversations were on the board,
+- how many were left out because nothing happened in them inside the window, and how recently the most recent of those spoke, both of which are in `summary.beyond_window`,
+- that they can ask for more, for example "go back a week" or "show me the last month".
+
+Say it in their language, in their register, and keep it to a sentence or two. It is an offer, not a disclaimer.
+
+Two things it must never become. Do not read the wider window first and then ask, the point is that the data was never pulled. And do not turn it into a nag: mention it once per board and drop it.
+
+When they do ask for more, rerun with `--days N` and say what the wider window added. If they want one specific old conversation rather than a wider sweep, use `--include-jid` instead, which is narrower and pulls in far less.
 
 ## Routing
 
@@ -36,7 +54,9 @@ Run `wa_digest.py --config <config>`.
 - Otherwise go to TRIAGE.
 
 **TRIAGE**
-Read `references/triage-doctrine.md` and `references/board-schema.md`, then the digest file. Sort the chats, write the drafts, author the board JSON, run `wa_board.py`, open the result. Then offer the obvious next moves: a different window, a deeper look at one chat, or a chat added to `ignored_jids`.
+Read `references/triage-doctrine.md` and `references/board-schema.md`, then the digest file. Sort the chats, write the drafts, author the board JSON, run `wa_board.py`, open the result.
+
+Then **always say the window out loud and offer to widen it.** This is required, not a nicety, and it is rule 10 below.
 
 Load `references/reply-links.md` when the user asks why a row copies instead of opening, or when a link misbehaves. Load `references/data-limits.md` when they ask where a conversation went, or why voice notes are invisible.
 

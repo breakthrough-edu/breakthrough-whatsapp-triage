@@ -15,7 +15,9 @@ Then say "set up whatsapp export" to Claude Code and it walks you through the on
 ## How it works
 
 1. **Once**, you export your WhatsApp history onto your own computer, from an Android backup file or an iPhone local backup. Claude walks you through it and debugs alongside you when your machine does something the guide did not predict.
-2. **Every run after that**, a script filters that export to a recent window, Claude reads the result and decides what needs you, and you get an offline HTML board.
+2. **Every run after that**, a script filters that export down to the last **3 days**, Claude reads the result and decides what needs you, and you get an offline HTML board.
+
+The 3 day default is deliberate. It is the smallest window that still answers "what needs me today", and it keeps the amount of your private conversation that any AI session ever sees as small as it can be while still being useful. After every board you are told what the window covered and what it left out, and you can widen it whenever you want by just asking.
 
 One to one conversations get a button that opens WhatsApp with the draft already in the box. Groups get a copy button instead, because WhatsApp has no link that opens a group with prefilled text.
 

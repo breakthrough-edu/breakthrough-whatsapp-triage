@@ -169,7 +169,7 @@ The skill routes on a `config.json` in the working folder, so setup is not finis
   "setup_complete": true,
   "export_path": "export.json",
   "contacts_db": "ContactsV2.sqlite",
-  "days": 7,
+  "days": 3,
   "link_style": "app",
   "ignored_jids": []
 }
@@ -178,7 +178,7 @@ The skill routes on a `config.json` in the working folder, so setup is not finis
 - `contacts_db` matters on this branch. The export run extracts `ContactsV2.sqlite` into the working folder, and the digest reads it to turn `@lid` style chats into real phone numbers, which is what lets those rows carry a reply link instead of a copy button. If the file is absent the digest still builds, it just marks those chats unresolved, so check the working folder for that filename before naming it here.
 - `export_path` may be written relative to the config file, which keeps the whole folder portable.
 - `link_style` is `app` on a machine with the WhatsApp desktop app installed, `web` on one without it. Ask which they have rather than guessing: guessing wrong shows up much later as reply buttons that do nothing when clicked.
-- `days` is the default triage window, 7 is the built in default, and the user can change it any time.
+- `days` is the default triage window. 3 is the built in default and it is deliberately narrow, so the first board reads about 60 conversations rather than about 140. The user can widen it any time by asking, and the skill offers that after every board.
 - The digest reads only the keys it knows and ignores the rest, so extra keys are harmless but do not invent ones you have not seen.
 
 **Probe:**

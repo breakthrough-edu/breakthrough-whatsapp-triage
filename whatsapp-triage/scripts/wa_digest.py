@@ -30,6 +30,12 @@ from pathlib import Path
 
 SCHEMA = "wa-digest/1"
 
+# Deliberately small. Three days is the whole point of the default: it pulls
+# roughly half the chats and under a quarter of the messages a week does, so
+# the first run reads far less of someone's life than it otherwise would.
+# Widening is a decision the user makes out loud, never a silent default.
+DEFAULT_DAYS = 3
+
 EXIT_OK = 0
 EXIT_EXPORT = 2
 EXIT_CONFIG = 3
@@ -346,6 +352,26 @@ def is_system_noise(message):
     return as_bool(message.get("meta")) and not body
 
 
+def newest_epoch_of(chat):
+    """Timestamp of the most recent REAL message in a chat, ignoring the window.
+
+    Must apply the same noise filter the window pass uses. Counting a system
+    message here would report a chat as freshly active when the only thing
+    that happened was a group rename, and the offer to widen would then quote
+    a date that is inside the window it is offering to widen past.
+    """
+    newest = None
+    for _key, message in iter_messages(chat.get("messages")):
+        if not isinstance(message, dict):
+            continue
+        if is_system_noise(message):
+            continue
+        stamp = as_epoch(message.get("timestamp"))
+        if stamp is not None and (newest is None or stamp > newest):
+            newest = stamp
+    return newest
+
+
 def load_lid_map(db_path, warnings):
     """Map the local part of a @lid JID to a phone number.
 
@@ -589,8 +615,8 @@ def build_parser():
         epilog=(
             "Typical run:\n"
             "  python3 wa_digest.py --config config.json\n\n"
-            "Look at the last 3 days instead of the usual 7:\n"
-            "  python3 wa_digest.py --config config.json --days 3\n\n"
+            "Widen to a week when the last few days were quiet:\n"
+            "  python3 wa_digest.py --config config.json --days 7\n\n"
             "Keep one chat you normally ignore:\n"
             "  python3 wa_digest.py --config config.json --include-jid 60123456789@s.whatsapp.net\n\n"
             "Exit codes: 0 finished (an empty window still counts as finished),\n"
@@ -604,7 +630,7 @@ def build_parser():
                         help="ContactsV2.sqlite, used to put phone numbers on hidden @lid chats. "
                              "Missing or unreadable is fine, those chats are marked unresolved.")
     parser.add_argument("--days", type=int, metavar="N",
-                        help="how many days back to read. Default 7.")
+                        help="how many days back to read. Default 3. Widen it when the user asks for more history, a wider window pulls in more chats.")
     parser.add_argument("--now", metavar="ISO8601",
                         help="pretend the current time is this, for example 2026-08-23T09:00:00. "
                              "Used by the tests so a run can be repeated exactly.")
@@ -636,7 +662,7 @@ def main(argv=None):
     warnings = []
     warn_unknown_keys(cfg.get("_raw", {}), warnings)
 
-    days = args.days if args.days is not None else (cfg["days"] or 7)
+    days = args.days if args.days is not None else (cfg["days"] or DEFAULT_DAYS)
     if days < 1:
         fail(EXIT_CONFIG, "days must be 1 or more, found %d" % days)
 
@@ -671,6 +697,9 @@ def main(argv=None):
     forced = set(args.include_jid or [])
 
     pruned = {"empty_window": 0, "broadcast": 0, "ignored": 0}
+    # How much a wider window would actually recover. Without this the
+    # session can only say "there is more", which is useless to decide on.
+    beyond = {"chats": 0, "newest_epoch": None}
     export_min = export_max = None
     export_messages = 0
     bad_total = 0
@@ -716,6 +745,11 @@ def main(argv=None):
                 }
             else:
                 pruned["empty_window"] += 1
+                newest = newest_epoch_of(chat)
+                if newest is not None:
+                    beyond["chats"] += 1
+                    if beyond["newest_epoch"] is None or newest > beyond["newest_epoch"]:
+                        beyond["newest_epoch"] = newest
                 continue
         records.append(record)
 
@@ -811,7 +845,7 @@ def main(argv=None):
                 "the quietest ones by last activity, and they are still counted in the summary."
                 % dropped)
         candidate = assemble(header, addressed, groups, directs, linkable, lid_unresolved,
-                             messages, inbound, outbound, media_gaps, pruned, dropped,
+                             messages, inbound, outbound, media_gaps, pruned, beyond, dropped,
                              notes, step, now_epoch, kept_count)
         return candidate, encode(candidate)
 
@@ -888,7 +922,7 @@ def main(argv=None):
 
 
 def assemble(header, addressed, groups, directs, linkable, lid_unresolved, messages,
-             inbound, outbound, media_gaps, pruned, truncated, warnings, step,
+             inbound, outbound, media_gaps, pruned, beyond, truncated, warnings, step,
              now_epoch, kept):
     transcript_cap, snippet_cap = step
     document = dict(header)
@@ -903,6 +937,15 @@ def assemble(header, addressed, groups, directs, linkable, lid_unresolved, messa
         "outbound": outbound,
         "media_gaps": media_gaps,
         "pruned": dict(pruned),
+        # What a wider window would recover, so the session can offer a real
+        # choice instead of a vague "there is more".
+        "beyond_window": {
+            "chats": beyond["chats"],
+            "newest_at": local_iso(beyond["newest_epoch"]),
+            "newest_days_ago": (
+                None if beyond["newest_epoch"] is None
+                else round((now_epoch - beyond["newest_epoch"]) / 86400.0, 1)),
+        },
         "truncated_chats": truncated,
     }
     document["warnings"] = warnings

@@ -53,19 +53,21 @@ The digest also drops whole chats before you see them, and says so in `summary.p
 
 Measured on one real heavy library of 72,776 messages:
 
-| Window | Active chats | Messages | Digest size |
-|---|---|---|---|
-| 3 days | 66 | 271 | 24 KB |
-| 7 days | 147 raw, 143 real | 1,090 | 76 KB |
-| 30 days | 455 | 5,444 | 358 KB |
+| Window | Active chats | Messages | Unreadable | Digest size |
+|---|---|---|---|---|
+| **3 days (default)** | 61 (39 groups, 22 direct) | 238 | 38 | 76 KB |
+| 7 days | 141 (89 groups, 52 direct) | 1,043 | 103 | 133 KB |
+| 30 days | about 455 | about 5,400 | many | over budget, degrades |
 
-- **3 days** is a Monday morning or daily pass. Comfortable, fast, and the transcripts stay long because the budget is not under pressure.
-- **7 days** is the default and the weekly clear out. Still readable in one session at full transcript depth.
-- **30 days is too big to use raw.** It needs aggressive pruning before it fits, and pruning is exactly what costs you transcript depth, so you end up reading five message tails of 455 chats. It is also the wrong shape for the question: triage answers "what needs me now", not "what happened last month". If a user insists, expect `pruned` and `truncated_chats` to be non-zero and declare both in `notice`.
+- **3 days is the default, and the narrowness is the point.** It is the smallest window that still answers "what needs me today", and it reads well under half the conversations a week does. Every extra day pulls more of someone's private life into a session, so widening is the user's decision to make out loud, never yours to make quietly. See rule 10 in `SKILL.md`.
+- **7 days** is the weekly clear out. Offer it when the last few days were genuinely quiet, or when the user asks.
+- **30 days is too big to use raw.** It goes over the size budget, so transcripts get cut to five messages and snippets get halved, and you end up skimming tails of hundreds of chats. It is also the wrong shape for the question: triage answers "what needs me now", not "what happened last month". If a user insists, expect `truncated_chats` to be non-zero and declare it in `notice`.
+
+**What the window left behind is in the digest.** `summary.beyond_window` gives the number of conversations with no traffic inside the window and how recently the most recent of them spoke. Use those two numbers when you make the offer, so the user is choosing between real quantities rather than a vague sense that there might be more.
 
 Two notes on the numbers. The window is measured backwards from the moment of the run, so the chat count moves a little between runs as the edge slides. And a lighter account scales down roughly in proportion; these figures are an upper bound, not a norm.
 
-**Composition matters more than volume.** On the 7 day window, the split was **91 groups and 52 one-to-one**, with **747 inbound and 343 outbound** messages. Most of what you read is group traffic addressed to nobody in particular. Budget your reading accordingly, as `triage-doctrine.md` step 1 sets out.
+**Composition matters more than volume.** On the default 3 day window the split was **39 groups and 22 one-to-one**, with **175 inbound and 63 outbound** messages, and at 7 days it was **89 groups and 52 one-to-one**. Most of what you read is group traffic addressed to nobody in particular. Budget your reading accordingly, as `triage-doctrine.md` step 1 sets out.
 
 ## Freshness
 

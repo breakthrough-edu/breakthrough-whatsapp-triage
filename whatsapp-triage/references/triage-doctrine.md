@@ -6,18 +6,18 @@ Three decisions, in order: which chats reach the board, which band each lands in
 
 ## What a real window actually looks like
 
-Measured on a heavy account, 7 day window: 143 real conversations (147 raw entries, 4 of them status and broadcast pseudo-chats the digest prunes), **91 groups and 52 one-to-one**, 1,090 messages (747 inbound, 343 outbound), 210 media gaps.
+Measured on a heavy account, on the default 3 day window: **61 conversations, 39 groups and 22 one-to-one**, 238 messages (175 inbound, 63 outbound), 38 unreadable attachments. At 7 days the same account gives 141 conversations and 1,043 messages, which is why 3 is the default and widening is the user's call.
 
 Four consequences you must design around:
 
-- **Most rows you consider are groups.** Group traffic is loud and almost never addressed to the user. The default verdict for a group is Parked, and you need a reason to move it.
-- **The job is subtraction.** 143 in, about 20 out, at most 5 of them urgent. A board where everything is urgent has failed.
+- **Most rows you consider are groups.** Even at 3 days it is 39 groups against 22 one-to-one. Group traffic is loud and almost never addressed to the user. The default verdict for a group is Parked, and you need a reason to move it.
+- **The job is subtraction.** About 60 in, about 20 out, at most 5 of them urgent. A board where everything is urgent has failed.
 - **There is no unread flag.** Confirmed absent from the export. Direction and recency are all you have. See `data-limits.md`.
 - **You are reading a tail, not a thread.** `transcript` holds at most the last 20 messages (10 or 5 when the digest had to shrink to fit its byte budget), and each `text` is clipped at 240 characters with a trailing `…`. Never claim anything about how a conversation started.
 
 ## Step 1: read order
 
-143 chats do not all deserve your attention. Spend it in this order, and stop reading a chat the moment its band is decided.
+Even 60 chats do not all deserve your attention. Spend it in this order, and stop reading a chat the moment its band is decided.
 
 1. `kind == "direct"` and `in_since_last_out >= 2`. Someone repeating themselves is the strongest live signal in the file. Read the whole transcript.
 2. `kind == "direct"` and `last.direction == "in"`. Read the whole transcript.
@@ -72,10 +72,10 @@ No match: not a row. Counted, never shown.
 **Overflow never disappears.**
 
 - More than 5 pass B1: rank by consequence, keep 5, move the rest to the **top of In Motion** with `tag.tone: "wf"`, and add `{"k": "Also needed you", "v": "2, top of In Motion"}` to `meta`.
-- Parked overflow, and everything that never became a row: `{"k": "Scanned", "v": "143 chats, 20 on board"}` plus `{"k": "Not shown", "v": "123, no ask found"}`.
+- Parked overflow, and everything that never became a row: `{"k": "Scanned", "v": "61 chats, 20 on board"}` plus `{"k": "Not shown", "v": "41, no ask found"}`.
 - Fold `summary.pruned` into that same "Not shown" number. Put `summary.truncated_chats` in `notice` instead, because truncation is a data gap and not a judgement of yours.
 
-`meta` must always carry: the window, a scanned/on board pair, and **exactly one** `hot: true` counter, which is the Needs You count.
+`meta` must always carry: the window (say the number of days, not just "recent"), a scanned/on board pair, and **exactly one** `hot: true` counter, which is the Needs You count. Rule 10 in `SKILL.md` also requires you to say the window in chat and offer to widen it, using `summary.beyond_window` for the real numbers.
 
 ## Step 5: tone
 

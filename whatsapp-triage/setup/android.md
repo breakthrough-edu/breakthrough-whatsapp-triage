@@ -155,7 +155,7 @@ The skill routes on a `config.json` in the working folder, so setup is not finis
   "platform": "android",
   "setup_complete": true,
   "export_path": "export.json",
-  "days": 7,
+  "days": 3,
   "link_style": "app",
   "ignored_jids": []
 }
@@ -164,7 +164,7 @@ The skill routes on a `config.json` in the working folder, so setup is not finis
 - Do not set `contacts_db` on this branch. Despite the name, the digest reads an iPhone contacts schema through that key, so pointing it at Android's `wa.db` only produces a warning. The Android way to get names is `--wab` in Step A7, which writes them into the export itself.
 - `export_path` may be written relative to the config file, which keeps the whole folder portable.
 - `link_style` is `app` on a machine with the WhatsApp desktop app installed, `web` on one without it. Ask which they have rather than guessing: guessing wrong shows up much later as reply buttons that do nothing when clicked.
-- `days` is the default triage window, 7 is the built in default, and the user can change it any time.
+- `days` is the default triage window. 3 is the built in default and it is deliberately narrow, so the first board reads about 60 conversations rather than about 140. The user can widen it any time by asking, and the skill offers that after every board.
 - The digest reads only the keys it knows and ignores the rest, so extra keys are harmless but do not invent ones you have not seen.
 
 **Probe:**

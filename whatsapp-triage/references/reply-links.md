@@ -69,7 +69,7 @@ A lid is not derivable from arithmetic or pattern. Never guess a number, never r
 
 ### Measured coverage
 
-Of **52 one-to-one chats** in a 7 day window on a heavy account, **38 (73%) got a working deep link and 14 did not.** That ratio is normal. A board where a quarter of the one-to-one rows copy instead of opening is working correctly.
+Of **22 one-to-one chats** in the default 3 day window on a heavy account, **15 (68%) got a working deep link and 7 did not.** At 7 days it was 37 of 52, the same ratio. That ratio is normal. A board where a quarter of the one-to-one rows copy instead of opening is working correctly.
 
 ## Groups cannot have a link
 
