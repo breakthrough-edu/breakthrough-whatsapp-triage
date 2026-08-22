@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>分诊台 · 电商 Demo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ff7a1f'/%3E%3Crect x='9' y='10' width='14' height='2.6' fill='%23fff'/%3E%3Crect x='9' y='15' width='14' height='2.6' fill='%23fff' opacity='.6'/%3E%3Crect x='9' y='20' width='9' height='2.6' fill='%23fff' opacity='.35'/%3E%3C/svg%3E">
+<style>
+:root {
+  --ink:#1d1d1f;
+  --ink2:#3a3a3c;
+  --muted:#6e6e73;
+  --faint:#98989d;
+  --line:rgba(0,0,0,.09);
+  --hair:rgba(0,0,0,.055);
+  --accent-ink:#a8460a;
+  --accent-soft:rgba(255,149,0,.13);
+  --accent-ring:rgba(255,149,0,.5);
+  --accent-fill:linear-gradient(150deg,rgba(255,149,0,.26),rgba(255,149,0,.09));
+  --st-ns:#6e6e73;
+  --st-ns-bg:rgba(0,0,0,.05);
+  --st-wf:#9a5b00;
+  --st-wf-bg:rgba(255,149,0,.15);
+  --st-bl:#b3271e;
+  --st-bl-bg:rgba(255,59,48,.11);
+  --st-dn:#10794c;
+  --st-dn-bg:rgba(52,199,89,.15);
+  --panel:rgba(255,255,255,.72);
+  --panel2:rgba(255,255,255,.45);
+  --glass:rgba(255,255,255,.72);
+  --glass-sel:rgba(255,255,255,.94);
+  --hover:rgba(255,255,255,.9);
+  --sunk:rgba(0,0,0,.035);
+  --ring1:inset 0 0 0 1px rgba(0,0,0,.07);
+  --glasstop:rgba(255,255,255,.9);
+  --glassring:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px rgba(0,0,0,.075);
+  --glassdrop:0 18px 40px -22px rgba(0,0,0,.26);
+  --barbg:rgba(250,250,252,.72);
+  --scroll:rgba(0,0,0,.16);
+  --sat:180%;
+  --smooth:auto;
+  --warn-ink:#8a2b23;
+  --warn-head:#b3271e;
+  --go-ink:#0b5c39;
+  --go-fill:linear-gradient(150deg,rgba(52,199,89,.30),rgba(52,199,89,.12));
+  --go-fill-hi:linear-gradient(150deg,rgba(52,199,89,.42),rgba(52,199,89,.18));
+  --go-ring:rgba(16,121,76,.42);
+  --dn-ring:rgba(16,121,76,.3);
+  --dot:rgba(0,0,0,.22);
+  --hairline:rgba(0,0,0,.055);
+  --bgimage:radial-gradient(120% 70% at 8% -8%, rgba(84,116,180,.15), transparent 52%),radial-gradient(80% 80% at 98% 2%, rgba(255,149,0,.11), transparent 50%),radial-gradient(130% 120% at 78% 116%, rgba(126,96,190,.11), transparent 55%),linear-gradient(160deg,#ffffff 0%,#f5f5f7 55%,#eeeef1 100%);
+}
+@media (prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]) {
+  --ink:#eef1f5;
+  --ink2:#c4cad3;
+  --muted:#8b929c;
+  --faint:#5b626c;
+  --line:rgba(255,255,255,.08);
+  --hair:rgba(255,255,255,.055);
+  --accent-ink:#ffb680;
+  --accent-soft:rgba(255,122,31,.13);
+  --accent-ring:rgba(255,146,72,.4);
+  --accent-fill:linear-gradient(150deg,rgba(255,122,31,.22),rgba(255,122,31,.07));
+  --st-ns:#8b929c;
+  --st-ns-bg:rgba(255,255,255,.05);
+  --st-wf:#f0b45e;
+  --st-wf-bg:rgba(214,150,50,.16);
+  --st-bl:#ff9d9d;
+  --st-bl-bg:rgba(220,80,80,.16);
+  --st-dn:#7fd8a6;
+  --st-dn-bg:rgba(60,180,110,.16);
+  --panel:rgba(255,255,255,.055);
+  --panel2:rgba(255,255,255,.03);
+  --glass:rgba(255,255,255,.055);
+  --glass-sel:rgba(20,23,28,.76);
+  --hover:rgba(255,255,255,.075);
+  --sunk:rgba(0,0,0,.22);
+  --ring1:inset 0 0 0 1px rgba(255,255,255,.08);
+  --glasstop:rgba(255,255,255,.14);
+  --glassring:inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 0 1px rgba(255,255,255,.12);
+  --glassdrop:0 30px 60px -26px rgba(0,0,0,.92);
+  --barbg:rgba(14,16,20,.55);
+  --scroll:rgba(255,255,255,.12);
+  --sat:1.6;
+  --smooth:antialiased;
+  --warn-ink:#ffc9c9;
+  --warn-head:#ffc4c4;
+  --go-ink:#bff0d5;
+  --go-fill:linear-gradient(150deg,rgba(60,180,110,.38),rgba(60,180,110,.14));
+  --go-fill-hi:linear-gradient(150deg,rgba(60,180,110,.5),rgba(60,180,110,.2));
+  --go-ring:rgba(127,216,166,.45);
+  --dn-ring:rgba(127,216,166,.28);
+  --dot:rgba(255,255,255,.18);
+  --hairline:rgba(255,255,255,.045);
+  --bgimage:radial-gradient(120% 70% at 8% -8%, rgba(84,116,180,.22), transparent 52%),radial-gradient(80% 80% at 98% 2%, rgba(255,122,31,.13), transparent 50%),radial-gradient(130% 120% at 78% 116%, rgba(126,96,190,.18), transparent 55%),linear-gradient(160deg,#15181f 0%,#0e1014 55%,#0a0c0f 100%);
+  }
+}
+:root[data-theme="dark"] {
+  --ink:#eef1f5;
+  --ink2:#c4cad3;
+  --muted:#8b929c;
+  --faint:#5b626c;
+  --line:rgba(255,255,255,.08);
+  --hair:rgba(255,255,255,.055);
+  --accent-ink:#ffb680;
+  --accent-soft:rgba(255,122,31,.13);
+  --accent-ring:rgba(255,146,72,.4);
+  --accent-fill:linear-gradient(150deg,rgba(255,122,31,.22),rgba(255,122,31,.07));
+  --st-ns:#8b929c;
+  --st-ns-bg:rgba(255,255,255,.05);
+  --st-wf:#f0b45e;
+  --st-wf-bg:rgba(214,150,50,.16);
+  --st-bl:#ff9d9d;
+  --st-bl-bg:rgba(220,80,80,.16);
+  --st-dn:#7fd8a6;
+  --st-dn-bg:rgba(60,180,110,.16);
+  --panel:rgba(255,255,255,.055);
+  --panel2:rgba(255,255,255,.03);
+  --glass:rgba(255,255,255,.055);
+  --glass-sel:rgba(20,23,28,.76);
+  --hover:rgba(255,255,255,.075);
+  --sunk:rgba(0,0,0,.22);
+  --ring1:inset 0 0 0 1px rgba(255,255,255,.08);
+  --glasstop:rgba(255,255,255,.14);
+  --glassring:inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 0 1px rgba(255,255,255,.12);
+  --glassdrop:0 30px 60px -26px rgba(0,0,0,.92);
+  --barbg:rgba(14,16,20,.55);
+  --scroll:rgba(255,255,255,.12);
+  --sat:1.6;
+  --smooth:antialiased;
+  --warn-ink:#ffc9c9;
+  --warn-head:#ffc4c4;
+  --go-ink:#bff0d5;
+  --go-fill:linear-gradient(150deg,rgba(60,180,110,.38),rgba(60,180,110,.14));
+  --go-fill-hi:linear-gradient(150deg,rgba(60,180,110,.5),rgba(60,180,110,.2));
+  --go-ring:rgba(127,216,166,.45);
+  --dn-ring:rgba(127,216,166,.28);
+  --dot:rgba(255,255,255,.18);
+  --hairline:rgba(255,255,255,.045);
+  --bgimage:radial-gradient(120% 70% at 8% -8%, rgba(84,116,180,.22), transparent 52%),radial-gradient(80% 80% at 98% 2%, rgba(255,122,31,.13), transparent 50%),radial-gradient(130% 120% at 78% 116%, rgba(126,96,190,.18), transparent 55%),linear-gradient(160deg,#15181f 0%,#0e1014 55%,#0a0c0f 100%);
+}
+:root {
+  --ease:cubic-bezier(.32,.72,0,1);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --accent:#ff7a1f;
+}
+* { box-sizing:border-box; }
+html,body { height:100dvh; }
+body {
+  margin:0; color:var(--ink); font-family:var(--font); font-size:13.5px;
+  -webkit-font-smoothing:var(--smooth); overflow:hidden;
+  display:grid; grid-template-rows:auto auto 1fr;
+  background:var(--bgimage);
+  background-attachment:fixed;
+}
+:focus-visible { outline:1px solid var(--accent-ink); outline-offset:2px; }
+::-webkit-scrollbar { width:9px; height:9px; }
+::-webkit-scrollbar-thumb { background:var(--scroll); border-radius:999px; }
+::-webkit-scrollbar-track { background:transparent; }
+
+/* ===== 顶栏 (Deck .bar) ===== */
+.bar { display:flex; align-items:center; gap:12px; height:50px; padding:0 22px;
+  background:var(--barbg); -webkit-backdrop-filter:blur(22px) saturate(var(--sat));
+  backdrop-filter:blur(22px) saturate(var(--sat)); border-bottom:1px solid var(--line); }
+.bar h1 { margin:0; font-size:15px; font-weight:650; letter-spacing:-.01em; }
+.bar .tag { font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.03em; }
+.bar .sp { flex:1; }
+.bar .kv { font-size:11px; color:var(--muted); }
+.bar .kv b { color:var(--ink2); font-weight:600; }
+.bar .kv.hot b { color:var(--accent-ink); }
+
+/* ===== 缺口条 ===== */
+.gapstrip { background:var(--st-bl-bg); border-bottom:1px solid var(--st-bl-bg);
+  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
+.gaphead { display:flex; align-items:center; gap:11px; width:100%; padding:8px 22px;
+  background:none; border:0; cursor:pointer; text-align:left; font:inherit; color:inherit;
+  transition:background .15s var(--ease); }
+.gaphead:hover { background:var(--hover); }
+.gaphead .mark { font-size:9.5px; font-weight:700; letter-spacing:.06em; color:var(--st-bl);
+  background:var(--st-bl-bg); padding:3px 8px; border-radius:999px;
+  box-shadow:inset 0 0 0 1px var(--st-bl); }
+.gaphead h4 { margin:0; font-size:12px; font-weight:650; color:var(--warn-head); }
+.gaphead .lead { font-size:11.5px; color:var(--muted); }
+.gaphead .chev { margin-left:auto; font-size:10.5px; color:var(--muted); }
+.gapbody { display:none; padding:0 22px 14px 52px; }
+.gapstrip.open .gapbody { display:block; }
+.gapbody ul { margin:0 0 10px; padding-left:16px; columns:2; column-gap:32px; }
+.gapbody li { font-size:11.5px; line-height:1.85; color:var(--ink2); break-inside:avoid; }
+.gapbody p { margin:0; padding-top:9px; border-top:1px solid var(--hair);
+  font-size:11px; line-height:1.8; color:var(--muted); }
+
+/* ===== 骨架 ===== */
+.shell { display:grid; grid-template-columns:376px 1fr; min-height:0; }
+
+/* ===== 左栏 ===== */
+.list { overflow-y:auto; padding:4px 12px 16px; border-right:1px solid var(--line); }
+.sect { margin-top:16px; padding:0 4px 9px; font-size:10.5px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.08em; font-weight:700;
+  display:flex; align-items:center; gap:7px; }
+.sect i { font-style:normal; font-size:9.5px; color:var(--faint); letter-spacing:0; }
+.item { display:block; width:100%; text-align:left; cursor:pointer; font:inherit; color:inherit;
+  background:var(--panel); border:0; border-radius:10px; padding:10px 12px; margin-bottom:7px;
+  box-shadow:var(--ring1);
+  transition:box-shadow .16s var(--ease), background .16s var(--ease); }
+.item:hover { background:var(--hover); box-shadow:var(--glassring); }
+.item.dim { background:var(--panel2); opacity:.62; padding:8px 12px; }
+.item.dim:hover { opacity:1; }
+.item.is-on { background:var(--glass-sel);
+  -webkit-backdrop-filter:blur(30px) saturate(var(--sat)); backdrop-filter:blur(30px) saturate(var(--sat));
+  box-shadow:var(--glassring), var(--glassdrop); opacity:1; }
+.item.p1.is-on { box-shadow:inset 0 1px 0 var(--glasstop),
+  inset 0 0 0 1px var(--accent-ring), var(--glassdrop); }
+.i-head { display:flex; align-items:center; gap:7px; }
+.pill { display:inline-block; flex:none; font-size:10.5px; font-weight:600; padding:1px 8px;
+  border-radius:999px; white-space:nowrap; }
+.t1 { background:var(--accent-fill);
+  box-shadow:inset 0 0 0 1px var(--accent-ring); color:var(--accent-ink); }
+.t2 { background:var(--st-wf-bg); box-shadow:inset 0 0 0 1px var(--st-wf); color:var(--st-wf); }
+.t3 { background:var(--st-ns-bg); box-shadow:inset 0 0 0 1px var(--line); color:var(--st-ns); }
+.i-emo { flex:none; font-size:12px; }
+.i-name { flex:1; min-width:0; font-size:13px; font-weight:600; line-height:1.35; color:var(--ink);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.item.dim .i-name { font-weight:500; color:var(--ink2); }
+.sq { flex:none; width:6px; height:6px; border-radius:50%; background:var(--st-bl);
+  box-shadow:0 0 7px 1px var(--st-bl-bg); }
+.i-num { flex:none; font-size:9.5px; font-weight:600; color:var(--faint);
+  font-variant-numeric:tabular-nums; }
+.snip { margin-top:6px; font-size:11.5px; line-height:1.5; color:var(--ink2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.item.p1 .snip { color:var(--accent-ink); }
+.i-foot { display:flex; align-items:center; gap:7px; margin-top:7px; }
+.ball { font-size:9.5px; font-weight:600; padding:1px 7px; border-radius:999px; }
+.bme { background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent-ring);
+  color:var(--accent-ink); }
+.bthem { background:var(--st-ns-bg); box-shadow:var(--ring1);
+  color:var(--muted); }
+.i-date { font-size:9.5px; color:var(--faint); font-variant-numeric:tabular-nums; }
+.legend { margin-top:14px; padding:10px 12px; border-radius:10px; background:var(--panel2);
+  box-shadow:var(--ring1);
+  font-size:10.5px; line-height:1.9; color:var(--muted); }
+kbd { font-size:9.5px; font-weight:600; color:var(--ink2); padding:1px 5px; border-radius:5px;
+  box-shadow:var(--ring1); }
+
+/* ===== 右栏: 一屏看完 ===== */
+.stage { min-height:0; padding:14px 18px 18px; display:flex; }
+.panel { display:none; }
+.panel.is-on { display:grid; grid-template-rows:auto 1fr; gap:12px; width:100%; min-height:0; }
+
+.glass { background:var(--glass); border-radius:14px;
+  -webkit-backdrop-filter:blur(30px) saturate(var(--sat)); backdrop-filter:blur(30px) saturate(var(--sat));
+  box-shadow:var(--glassring), var(--glassdrop); }
+.phead { padding:14px 18px 0; overflow:hidden; }
+.ph-l { display:flex; align-items:center; gap:10px; padding-bottom:13px; }
+.pill.big { font-size:11px; padding:3px 11px; }
+.ptitle { margin:0; font-size:19px; font-weight:650; letter-spacing:-.01em; }
+.gauges { display:flex; flex-wrap:wrap; margin:0 -18px; border-top:1px solid var(--hair);
+  background:var(--panel2); }
+.gauge { flex:0 0 auto; min-width:96px; padding:8px 16px; border-right:1px solid var(--hair); }
+.gauge.grow { flex:1 1 190px; min-width:0; }
+.gauge:last-child { border-right:0; }
+.gauge span { display:block; font-size:9px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--faint); }
+.gauge b { display:block; margin-top:4px; font-size:12px; font-weight:600; color:var(--ink2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gauge b.hot { color:var(--accent-ink); }
+
+.grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.04fr); gap:12px; min-height:0; }
+.col { display:grid; grid-template-rows:auto minmax(0,1fr); gap:12px; min-height:0; }
+.col:last-child { grid-template-rows:minmax(0,1fr); }
+
+.mod { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+.mod-head { flex:none; display:flex; align-items:center; gap:8px; padding:11px 16px 9px;
+  border-bottom:1px solid var(--hair); }
+.mod-head h4 { margin:0; font-size:10.5px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--muted); }
+.mod-c { margin-left:auto; font-size:10px; color:var(--faint); }
+.mod-body { padding:14px 16px 16px; min-height:0; }
+.mod-body.scroll { overflow-y:auto; }
+.prose { margin:0; font-size:14px; line-height:1.9; color:var(--ink); }
+.warnbox { margin-top:13px; background:var(--st-bl-bg); border-radius:10px; padding:10px 13px;
+  box-shadow:inset 0 0 0 1px var(--st-bl); font-size:12.5px; line-height:1.75;
+  color:var(--warn-ink); }
+.warnbox b { display:block; font-size:9px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--st-bl); margin-bottom:6px; }
+.ctx { margin:0; padding:0; list-style:none; }
+.ctx li { position:relative; padding:6px 0 6px 15px; font-size:12.5px; line-height:1.7;
+  color:var(--ink2); }
+.ctx li + li { border-top:1px solid var(--hairline); }
+.ctx li:before { content:""; position:absolute; left:0; top:15px; width:5px; height:5px;
+  border-radius:50%; background:var(--dot); }
+.mod.empty { box-shadow:var(--ring1); background:var(--panel2); }
+
+/* 草稿模组: 绿 = 成了 / 送得出去。⛔ 不给橙, 橙留给「需要你」 */
+.mod.work { box-shadow:inset 0 1px 0 var(--glasstop),
+  inset 0 0 0 1px var(--dn-ring), var(--glassdrop); }
+.mod.work .mod-head { border-bottom-color:var(--dn-ring); }
+.mod.work .mod-head h4 { color:var(--st-dn); }
+.mod.work.none { box-shadow:var(--ring1); background:var(--panel2); }
+.mod.work.none .mod-head h4 { color:var(--muted); }
+.work-body { display:flex; flex-direction:column; min-height:0; }
+.edited { display:none; font-size:9px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--st-dn); background:var(--st-dn-bg); padding:2px 8px; border-radius:999px;
+  box-shadow:inset 0 0 0 1px var(--go-ring); margin-left:8px; }
+.edited.on { display:inline-block; }
+.dnote { margin:0 0 12px; font-size:11.5px; line-height:1.75; color:var(--muted); }
+textarea { display:block; width:100%; flex:1 1 auto; min-height:110px; color:var(--ink);
+  background:var(--sunk); border:0; border-radius:10px; padding:13px 15px; resize:none;
+  box-shadow:var(--ring1);
+  font-family:var(--font); font-size:14px; line-height:1.9;
+  transition:box-shadow .16s var(--ease); }
+textarea:focus { outline:none; box-shadow:inset 0 0 0 1px var(--go-ring); }
+textarea.dirty { box-shadow:inset 0 0 0 1px var(--go-ring); }
+.bar2 { flex:none; display:flex; align-items:center; gap:12px; margin-top:11px; }
+.cnt { font-size:10px; color:var(--faint); font-variant-numeric:tabular-nums; }
+.go { margin-left:auto; color:var(--go-ink); font-size:12px; font-weight:600; cursor:pointer;
+  border:0; border-radius:999px; padding:8px 16px;
+  background:var(--go-fill);
+  box-shadow:inset 0 0 0 1px var(--go-ring);
+  transition:background .16s var(--ease), transform .16s var(--ease); }
+.go:hover { background:var(--go-fill-hi); }
+.go:active { transform:translateY(1px); }
+.go.copy { color:var(--ink2); background:var(--panel);
+  box-shadow:var(--ring1); }
+.go.copy:hover { background:var(--hover); color:var(--ink); }
+.gohint { flex:none; margin:10px 0 0; font-size:10.5px; line-height:1.75; color:var(--faint); }
+
+.seg { display:inline-flex; margin-left:12px; padding:2px; border-radius:999px;
+  background:var(--panel2); box-shadow:var(--ring1); }
+.seg button { font:inherit; font-size:10px; font-weight:600; color:var(--muted); cursor:pointer;
+  background:none; border:0; border-radius:999px; padding:3px 9px;
+  transition:background .16s var(--ease), color .16s var(--ease); }
+.seg button:hover { color:var(--ink); }
+.seg button[data-on="1"] { background:var(--glass-sel); color:var(--ink); box-shadow:var(--ring1); }
+
+@media (prefers-reduced-motion:reduce) {
+  *, *:before, *:after { transition:none !important; animation:none !important; }
+  .go:active { transform:none; }
+}
+
+/* ---- 模板追加: 通用色调 class, 让 JSON 里的 tone 值对得上 Deck 的状态色家族 ---- */
+.tone-accent { background:var(--accent-fill); box-shadow:inset 0 0 0 1px var(--accent-ring); color:var(--accent-ink); }
+.tone-wf { background:var(--st-wf-bg); box-shadow:inset 0 0 0 1px var(--st-wf); color:var(--st-wf); }
+.tone-ns { background:var(--st-ns-bg); box-shadow:inset 0 0 0 1px var(--line); color:var(--st-ns); }
+.tone-bl { background:var(--st-bl-bg); box-shadow:inset 0 0 0 1px var(--st-bl); color:var(--st-bl); }
+.tone-dn { background:var(--st-dn-bg); box-shadow:inset 0 0 0 1px var(--go-ring); color:var(--st-dn); }
+.item.tone-accent-rail.is-on { box-shadow:inset 0 1px 0 var(--glasstop), inset 0 0 0 1px var(--accent-ring), var(--glassdrop); }
+.empty-hint { padding:40px 22px; color:var(--muted); font-size:12.5px; line-height:1.9; }
+</style>
+</head>
+<body>
+<!--
+  ============================================================================
+  分诊台模板 (Triage Board Template)
+  ============================================================================
+
+  一张「左边列清单, 右边一屏做事」的本机工作台。离线单档, 不连任何外部服务,
+  没有 build step, 双击就开。
+
+  ── 怎么用 ────────────────────────────────────────────────────────────────
+  1. 复制这个档, 改名。
+  2. 只改 <script id="board-data"> 里那一块 JSON。其他一律不要动。
+  3. 存档, 用浏览器打开。
+
+  ── 设计法源 (⛔ 要改外观先读这段) ────────────────────────────────────────
+  颜色 · 玻璃质感 · 圆角 · 缓动全部抄自 Jia Wei 的 Command Deck:
+      07_Breakthrough/Control-Tower-Dashboard/index.html 的 :root
+  ⛔ 不要从零发明配色, 也不要套外来的 design skill。已经试过四轮 (minimal /
+     Carbon / 稽核表), 全被驳回, 因为这台机上早就有正本。要改先去读那份 :root。
+
+  深色 = Deck 原值逐字抄。浅色 = Apple 材质语言 (#F5F5F7 底 · 白色半透明
+  vibrancy · #1D1D1F 文字 · 系统色)。两套共用同一组 token 名字, 右上角可切换,
+  选择记在 localStorage。
+  ⚠️ 深色的 token 在 CSS 里写了两次 (系统深色 + 手动深色)。少写一次, toggle
+     就会有一边推不动。
+
+  ⛔ Deck 自己 CSS 注释里立的规矩, 这里照守: **橙 = 下一个 / 需要你**。
+     整个画面只准 P1 那颗药丸跟「球在你」是橙的。多一个常驻橙, 这个信号就废了。
+     其他一律走状态色家族: wf 琥珀 = 等对方 · ns 灰 = 静置 · bl 红 = 读不到
+     · dn 绿 = 送得出去 (动作钮)。
+
+  ── JSON 栏位 ─────────────────────────────────────────────────────────────
+  顶层
+    title      顶栏标题
+    tag        标题旁那个小标签, 可省
+    meta       顶栏的 k/v 对, 加 "hot": true 会染成强调色
+    stamp      顶栏最右边那行小字
+    notice     顶部那条可收合的警示 row。设成 null 整条消失。
+               { badge, title, lead, items[], footer }
+               lead 收起来的时候仍然看得见, 所以别把重点藏进 items。
+    bands      分段。每段 { label, rows[] }
+    legend     左栏底部那块小字, 吃 HTML
+
+  row
+    id         唯一字串, 拿来配对左右两栏
+    name       显示名
+    emoji      从 name 里拆出来单独占一格。⛔ 留在 name 里会让每行名字起点对不齐。
+    tag        { label, tone } tone = accent | wf | ns | bl | dn
+    dim        true = 无待办, 那一行会变矮变淡
+    flag       true = 名字后面长一颗红点, 表示这条有读不到的资料
+    num / date 右上角数字与日期
+    snippet    一行提示。tone 是 accent 的 row 会把它染成强调色。
+    chip       { label, tone } 左栏底部那颗小药丸
+    gauges     右栏标题下那排仪表格 [{ k, v, hot, grow }]
+    blocks     右栏的内容区块, 依序渲染 (见下)
+
+  block
+    { kind: "prose", title, text, warn?: { title, text } }
+    { kind: "list",  title, items: [] }
+    { kind: "draft", title, note, text,
+      action: { type: "link" | "copy", label, label_dirty, href_prefix?, hint } }
+
+  ⚠️ 版面规则: draft 那一块固定去右半栏并撑满高度, 其他 block 依序叠在左半栏。
+     整页锁死不滚 (overflow:hidden), 内容太长时只有该区块内部滚。
+     所以 blocks 建议最多三块, 其中一块是 draft。
+
+  ⛔ 动作钮只组 URL, 不替人送出。href_prefix 后面接 encodeURIComponent(当下框里
+     的文字), 而且是**按下那一刻**才组, 所以带走的一定是使用者改完的版本。
+-->
+
+<script id="board-data" type="application/json">
+{
+  "title": "Monday 早上 · WhatsApp 分诊台",
+  "tag": "DEMO",
+  "meta": [
+    {
+      "k": "生意",
+      "v": "Ambun Botanicals (居家香氛 · Shopee / TikTok Shop / 官网)"
+    },
+    {
+      "k": "读取窗",
+      "v": "08-16 08:00 到 08-18 09:35"
+    },
+    {
+      "k": "扫过的对话",
+      "v": "63 条 (取出 10 条)"
+    },
+    {
+      "k": "要你今天动",
+      "v": "3 条",
+      "hot": true
+    },
+    {
+      "k": "桌上的钱",
+      "v": "RM 14,382.60"
+    }
+  ],
+  "stamp": "产生于 2026-08-18 09:35",
+  "notice": {
+    "badge": "!",
+    "title": "读不到的东西 · 4 项",
+    "lead": "Farah 那笔 refund 的破损照片是 view once, 已经过期打不开, 所以她那条草稿是空壳。",
+    "items": [
+      "Farah Zulkifli 08-17 发的 3 张破损照片是 view once, 现在只剩「Photo」两个字, 内容读不到",
+      "Guangzhou 供应商群里那份报价 PDF 只有档名 (AMB-Q3-CERAMIC-v4.pdf), 附件本体没同步下来",
+      "J&T 客服那条 5 分 12 秒语音没有转文字, 只知道长度和时间",
+      "Hafiz 的 COD 收款截图糊到看不出金额, 只认得出日期 08-15"
+    ],
+    "footer": "这四项我一律标了红点, 草稿写到哪算哪, 不猜。要补的话, 手机上原对话点开看一眼比我猜准。"
+  },
+  "bands": [
+    {
+      "label": "高优先",
+      "rows": [
+        {
+          "id": "sity-nurhaliza-wrong-item",
+          "name": "Sity Nurhaliza",
+          "emoji": "🔥",
+          "tag": {
+            "label": "要你动",
+            "tone": "accent"
+          },
+          "dim": false,
+          "flag": false,
+          "num": "17",
+          "date": "08-18 08:12",
+          "snippet": "买 Pandan Wangi 收到 Kopi Tarik, 已经第三天没人回她",
+          "chip": {
+            "label": "球在你",
+            "tone": "accent"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "你",
+              "hot": true
+            },
+            {
+              "k": "最后活动",
+              "v": "08-18 08:12"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-15 到 08-18, 17 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "prose",
+              "title": "最新状况",
+              "text": "订单 SHP-2408-11973, 她买两支 Pandan Wangi 100ml 加一个藤枝组 (RM 187.40), 收到的是 Kopi Tarik 100ml, SKU 拿错了 (AMB-RD-PW100 出成 AMB-RD-KT100)。她 08-15 就发了开箱照, 我们这边三天没回, 她 08-17 已经在 Shopee 开了 dispute。08-18 早上 8:12 又补一句说要 post 上 Threads。事实是清楚的: 出货的确出错, 照片对得上, 没有争议空间。"
+            },
+            {
+              "kind": "list",
+              "title": "时间线",
+              "items": [
+                "08-14 14:22 下单 SHP-2408-11973, RM 187.40, Shopee 付款",
+                "08-15 11:03 她发开箱照, 三张, 瓶身标签清楚是 Kopi Tarik",
+                "08-15 11:04 「boss 我要的是 pandan wangi wor」",
+                "08-16 全天无回覆",
+                "08-17 09:41 她在 Shopee 开 return dispute",
+                "08-17 21:16 「三天了 一个人都没有 reply 我」",
+                "08-18 08:12 「我 post 上 Threads 咯 你们自己看着办」"
+              ]
+            },
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "她要的不是解释, 是有人认错。所以开头第一句直接认, 不铺垫、不讲仓库多忙。补寄加不用退货是我们本来就有的 SOP (低于 RM 300 错发单一律这样处理), 所以我替你填死了, 没留空。语气刻意短, 长的道歉在这个点上会像在拖。",
+              "text": "Sity, 是我们出错, 对不起, 拖了三天更加不应该。Pandan Wangi 100ml 两支我今天下午就 ship 出去, tracking 一出我马上发你, Kopi Tarik 那支你留着, 不用退。Shopee 那边的 dispute 你先不用撤, 等货到你手上确认没问题再说。",
+              "action": {
+                "type": "link",
+                "label": "用草稿开启 WhatsApp",
+                "label_dirty": "用你改的版本开启",
+                "href_prefix": "whatsapp://send?phone=60123456789&text=",
+                "hint": "发之前确认仓库今天真的出得了货, 讲了做不到会更难收。"
+              }
+            }
+          ]
+        },
+        {
+          "id": "raya-hampers-quote-quiet",
+          "name": "Melissa Tan (Raya Hampers 采购)",
+          "emoji": "💰",
+          "tag": {
+            "label": "要你动",
+            "tone": "accent"
+          },
+          "dim": false,
+          "flag": false,
+          "num": "23",
+          "date": "08-16 17:48",
+          "snippet": "RM 8,940 的企业礼盒报价发出后静了 9 天",
+          "chip": {
+            "label": "球在你",
+            "tone": "accent"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "你",
+              "hot": true
+            },
+            {
+              "k": "最后活动",
+              "v": "08-16 17:48"
+            },
+            {
+              "k": "读取窗",
+              "v": "07-28 到 08-18, 23 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "prose",
+              "title": "最新状况",
+              "text": "她公司 (Sunway 那间 property agency) 要 300 份年终客户礼盒, 报价 QT-2408-0032 是 RM 8,940.00 (每份 RM 29.80, 含 60ml 香薰喷雾加木盖玻璃罐)。08-07 发出去后她只回「收到 我 bring up 给 management」, 之后就静了。08-16 她主动问了一句包装能不能印公司 logo, 然后又没下文。她还在动, 只是内部卡着。真正的风险是时间: 300 份要 5 周备料, 拖到 9 月中就赶不上她原本讲的 11 月中交货。"
+            },
+            {
+              "kind": "list",
+              "title": "时间线",
+              "items": [
+                "07-28 10:15 她第一次问企业礼盒, 讲明 300 份、年底送客户",
+                "08-04 16:30 我们发样品照加三个组合方案",
+                "08-07 11:22 正式报价 QT-2408-0032, RM 8,940.00",
+                "08-07 11:40 「收到 我 bring up 给 management」",
+                "08-12 到 08-15 无动静",
+                "08-16 17:48 「hi 请问盒子可以印我们 logo 吗」, 之后没再回"
+              ]
+            },
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "不追进度, 追进度只会逼她讲「还在等」。改成回答她 08-16 那个 logo 问题 (那是买家动作, 不是客套), 顺手把备料时间讲清楚, 让 deadline 替你催。折扣一个字都没提, 她还没杀价, 你先降就是白降。",
+              "text": "Melissa, logo 可以印, 木盖上烫印或者盒面贴纸都行, 烫印每份加 RM 1.20, 贴纸免费。另外先跟你 flag 一个时间: 300 份备料要 5 周, 要赶 11 月中交货的话, 最迟 9 月 12 号要确认落单。你那边 management 大概几时会有答案, 我先帮你 hold 住料。",
+              "action": {
+                "type": "link",
+                "label": "用草稿开启 WhatsApp",
+                "label_dirty": "用你改的版本开启",
+                "href_prefix": "whatsapp://send?phone=60123456789&text=",
+                "hint": "9 月 12 号那个日期是真的备料窗口, 别随口改, 改了下次就没有约束力。"
+              }
+            }
+          ]
+        },
+        {
+          "id": "guangzhou-ceramic-supplier",
+          "name": "广州陶瓷厂 · Ambun 采购群",
+          "emoji": "🏭",
+          "tag": {
+            "label": "要你动",
+            "tone": "accent"
+          },
+          "dim": false,
+          "flag": true,
+          "num": "41",
+          "date": "08-17 22:09",
+          "snippet": "报价 PDF 读不到, 而且他们欠你的确认已经过期 4 天",
+          "chip": {
+            "label": "球在你",
+            "tone": "accent"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "群组 (7 人)"
+            },
+            {
+              "k": "球在谁",
+              "v": "你",
+              "hot": true
+            },
+            {
+              "k": "最后活动",
+              "v": "08-17 22:09"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-05 到 08-18, 41 条读到 40 条",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "prose",
+              "title": "最新状况",
+              "text": "陶瓷扩香石底座 (AMB-CS-STONE-M) 第二批 1,200 pcs, 你 08-13 要他们 08-14 前确认单价和船期, 到现在第 4 天了还是只有「我们在核」。Chen 姐 08-17 晚上丢了一份 AMB-Q3-CERAMIC-v4.pdf 进群就下线了。这批货接 10 月的 Shopee 大促, 海运要 26 天, 再拖两周整个促销备货就断。",
+              "warn": {
+                "title": "读不到 / 要小心",
+                "text": "那份 AMB-Q3-CERAMIC-v4.pdf 我只读到档名, 附件本体没同步过来, 里面的价钱和 MOQ 完全不知道。所以草稿里不敢引用任何数字, 你手机点开那份 PDF 再决定要不要加一句。"
+              }
+            },
+            {
+              "kind": "list",
+              "title": "时间线",
+              "items": [
+                "08-05 15:20 你提第二批 1,200 pcs 的需求",
+                "08-08 09:12 他们回「大概跟上批同价」, 没给白纸黑字",
+                "08-13 10:44 你明确要求 08-14 前给单价加船期",
+                "08-14 全天无回覆",
+                "08-15 17:31 Chen 姐「我们在核 你等等」",
+                "08-17 22:09 群里丢了 AMB-Q3-CERAMIC-v4.pdf, 无文字说明, 没人跟进"
+              ]
+            },
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "供应商这条线不需要客气, 需要一个具体的时间点和一个具体的后果。草稿刻意只问两个数字, 问三个以上他们又会整包拖。是群组没有单一号码, 所以只能复制去贴。",
+              "text": "Chen 姐早, v4 那份我收到了。麻烦今天下班前直接在群里打两个数字给我: 1,200 pcs 的单价, 加最早的开船日期。10 月促销的备货窗口只到 8 月 22 号, 过了这天我这边要转另一家备一批, 不想走到那步。",
+              "action": {
+                "type": "copy",
+                "label": "复制草稿",
+                "label_dirty": "复制你改的版本",
+                "hint": "群组没有号码, 复制后自己贴进采购群。"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "在跑中",
+      "rows": [
+        {
+          "id": "farah-refund-photos-gone",
+          "name": "Farah Zulkifli",
+          "emoji": "🧾",
+          "tag": {
+            "label": "要盯",
+            "tone": "wf"
+          },
+          "dim": false,
+          "flag": true,
+          "num": "9",
+          "date": "08-17 20:44",
+          "snippet": "要求全额退, 但她的破损照片是 view once, 已经看不到了",
+          "chip": {
+            "label": "球在你",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "你"
+            },
+            {
+              "k": "最后活动",
+              "v": "08-17 20:44"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-16 到 08-18, 9 条读到 6 条",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "prose",
+              "title": "最新状况",
+              "text": "订单 WEB-2408-0771 (RM 268.90, 礼盒装四件套加陶瓷底座), 她讲收到时玻璃罐裂了两个, 要求全额退款加运费。她 08-17 发过三张照片, 但那三张是 view once, 现在打不开。没有照片我判断不了裂的是运输问题还是她自己摔的, 也判断不了该退多少。",
+              "warn": {
+                "title": "读不到 / 要小心",
+                "text": "08-17 那 3 张照片是 view once, 已过期, 现在只剩「Photo」两个字。这是这条对话唯一重要的证据, 没有它任何金额都是猜的。所以下面那份草稿是空壳, 我刻意没有替你写完。"
+              }
+            },
+            {
+              "kind": "list",
+              "title": "时间线",
+              "items": [
+                "08-13 官网下单 WEB-2408-0771, RM 268.90",
+                "08-16 12:07 签收 (J&T 显示已派达)",
+                "08-16 19:52 「boss 我开箱两个瓶裂了」",
+                "08-17 10:15 发了 3 张照片 (view once, 现已过期)",
+                "08-17 20:44 「我要全额 refund 加运费 268.90 加 12」"
+              ]
+            },
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "这是一份故意写不完的草稿。照片过期了, 我看不到破损程度, 而全额退、退一半、还是补寄两个罐子, 这是政策判断不是文字判断, 只有你能拍。请先在手机上确认照片真的救不回来, 然后把【】里的填掉再发。",
+              "text": "Farah 早, 破损这件事我们一定处理。麻烦你再发一次照片, 之前那几张是 view once, 我这边已经打不开了。收到照片后我们【全额退 RM 268.90 加运费 / 退 RM___ / 补寄两个玻璃罐 你填】, 你先告诉我你比较想要哪一个。",
+              "action": {
+                "type": "link",
+                "label": "用草稿开启 WhatsApp",
+                "label_dirty": "用你改的版本开启",
+                "href_prefix": "whatsapp://send?phone=60123456789&text=",
+                "hint": "【】里没填掉不要发, 发出去等于默认全额退。"
+              }
+            }
+          ]
+        },
+        {
+          "id": "jnt-cod-dispute",
+          "name": "J&T Klang Hub · Encik Hafiz",
+          "emoji": "📦",
+          "tag": {
+            "label": "要盯",
+            "tone": "wf"
+          },
+          "dim": false,
+          "flag": true,
+          "num": "14",
+          "date": "08-18 09:02",
+          "snippet": "COD 收了钱但没入账, 唯一证据是一张糊掉的截图",
+          "chip": {
+            "label": "球在对方",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "对方"
+            },
+            {
+              "k": "最后活动",
+              "v": "08-18 09:02"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-12 到 08-18, 14 条读到 12 条",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "prose",
+              "title": "最新状况",
+              "text": "三张 COD 单 (JT-MY-8827194403 / 8827194511 / 8827201766, 合计 RM 421.70) 客户都签收了, 但 08-15 那期 COD remittance 只入了 RM 1,847.50, 对不上, 差 RM 421.70。Hafiz 08-18 早上讲他找到收款记录了, 会 push 去 finance。球在他那边, 你今天不用追, 但周三前没入账就要升级。",
+              "warn": {
+                "title": "读不到 / 要小心",
+                "text": "他 08-16 发的 COD 收款截图糊到看不出金额, 只认得出日期 08-15。另外 08-17 那条 5 分 12 秒语音没有转文字, 内容不明。所以「他承认收到钱」这个判断是从文字讯息推的, 不是从那两个附件。"
+              }
+            },
+            {
+              "kind": "list",
+              "title": "时间线",
+              "items": [
+                "08-12 三单 COD 派送完成, 客户签收",
+                "08-15 COD remittance 入账 RM 1,847.50, 短少 RM 421.70",
+                "08-16 11:20 你截对账表问他",
+                "08-16 15:47 他发一张截图 (糊, 读不到金额)",
+                "08-17 18:30 5 分 12 秒语音 (无转文字)",
+                "08-18 09:02 「boss saya dah jumpa record, push kat finance hari ni」"
+              ]
+            },
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "球在他手上, 现在追第二次只会把关系搞僵。这条草稿的作用是把口头承诺钉成一个日期, 顺手留下文字纪录, 万一要升级到 J&T 商家客服就有得引。写得轻, 但日期是硬的。",
+              "text": "Terima kasih Hafiz. 那我记着这三单 RM 421.70 走这个礼拜三 (08-20) 那期 remittance, 对吗。到时候我看到入账就 confirm 你一声, 有卡住的话你早点讲, 我这边好安排。",
+              "action": {
+                "type": "link",
+                "label": "用草稿开启 WhatsApp",
+                "label_dirty": "用你改的版本开启",
+                "href_prefix": "whatsapp://send?phone=60123456789&text=",
+                "hint": "周三收工前没入账, 直接去 J&T 商家后台开 ticket, 别再问他。"
+              }
+            }
+          ]
+        },
+        {
+          "id": "reseller-inquiry-johor",
+          "name": "Kavitha Rajan (Batu Pahat)",
+          "emoji": "🤝",
+          "tag": {
+            "label": "要盯",
+            "tone": "wf"
+          },
+          "dim": false,
+          "flag": false,
+          "num": "6",
+          "date": "08-17 14:26",
+          "snippet": "问 wholesale 价, 但还不知道她卖去哪、拿多少",
+          "chip": {
+            "label": "球在你",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "你"
+            },
+            {
+              "k": "最后活动",
+              "v": "08-17 14:26"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-17 到 08-18, 6 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "prose",
+              "title": "最新状况",
+              "text": "她从 TikTok Shop 找过来, 开口就问「wholesale price list 可以给我吗」。目前只知道她在 Batu Pahat 开一间小 gift shop, 其他一概不知: 拿什么量、有没有实体店、是不是要在 Shopee 上架跟你自己打对台。上一次你没问清楚就发价目表, 结果对方转手在 Shopee 卖 RM 4 低过你官网, 那单事情你处理了两个礼拜。所以这次先问再报。"
+            },
+            {
+              "kind": "list",
+              "title": "时间线",
+              "items": [
+                "08-17 13:58 「hi 请问有 wholesale 吗 我开 gift shop 的」",
+                "08-17 14:02 你回「有的 请问是哪一区」",
+                "08-17 14:11 「Batu Pahat 这边」",
+                "08-17 14:26 「可以直接给我 price list 吗」, 之后停在这里"
+              ]
+            },
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "刻意不给价目表, 但也不能听起来像在筛人。所以包装成「价钱分级、要知道量才报得准」, 三个问题一次问完, 她答得出来就是真的做生意, 答不出来就是在比价。语气比客服草稿硬一点, 这是 B2B 不是零售。",
+              "text": "Kavitha 你好, 我们 wholesale 是分三个 tier 的, 量不同价钱差蛮多, 所以我先问你三样再报比较准: (1) 第一批大概拿多少支 (2) 是实体店卖还是也会上 Shopee / TikTok Shop (3) 你打算卖什么价位。线上转售我们有最低售价规定, 所以这题要先讲清楚。你回我这三题, 我今天就把对应那个 tier 的价目表发你。",
+              "action": {
+                "type": "link",
+                "label": "用草稿开启 WhatsApp",
+                "label_dirty": "用你改的版本开启",
+                "href_prefix": "whatsapp://send?phone=60123456789&text=",
+                "hint": "她答不上第三题的话, 十有八九是替别人比价, 不用急着报。"
+              }
+            }
+          ]
+        },
+        {
+          "id": "aina-collab-stalled",
+          "name": "Aina Sofea (IG 香氛博主)",
+          "emoji": "🎬",
+          "tag": {
+            "label": "要盯",
+            "tone": "wf"
+          },
+          "dim": false,
+          "flag": false,
+          "num": "11",
+          "date": "08-14 22:37",
+          "snippet": "拍摄谈好一半, 卡在她要加 RM 600 现金",
+          "chip": {
+            "label": "球在你",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "你"
+            },
+            {
+              "k": "最后活动",
+              "v": "08-14 22:37"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-02 到 08-18, 11 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "prose",
+              "title": "最新状况",
+              "text": "原本谈的是 barter: 你出一套 RM 320 的礼盒, 她出一支 Reel 加两个 Story。谈到 08-14 她加了一句要另外收 RM 600 现金, 然后你没回, 就停在那里四天。她 IG 4.2 万粉, 上一支香氛开箱 3.1 万播放, 数字不算差但也不是非她不可。接不接是你的钱, 不是我的判断。"
+            },
+            {
+              "kind": "list",
+              "title": "时间线",
+              "items": [
+                "08-02 16:40 她 DM 转来 WhatsApp, 主动提合作",
+                "08-06 11:15 你提 barter: 礼盒换一支 Reel 加两个 Story",
+                "08-08 20:02 她同意, 讲 8 月尾拍",
+                "08-14 22:37 「另外 rate card 是 600 一支 Reel 哦」",
+                "08-15 到 08-18 你没回, 她也没催"
+              ]
+            },
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "接不接是钱的判断, 我不替你拍。RM 600 加一套礼盒等于 RM 920 换一支 Reel, 值不值得看你 10 月促销要不要这条流量。草稿两个版本的岔口就在【】那里, 你选一边, 另一边整句删掉再发。",
+              "text": "Aina hi, 抱歉隔了几天才回。Rate card 那边我这样看: 【接: RM 600 我们 ok, 不过想加一个条件, Reel 的 usage 让我们同步放去 TikTok Shop / 不接: 现金这块目前预算走不动, 纯 barter 的话我们随时可以开拍 你填】。你觉得可以的话, 我们就订 8 月尾那个礼拜的拍摄日。",
+              "action": {
+                "type": "link",
+                "label": "用草稿开启 WhatsApp",
+                "label_dirty": "用你改的版本开启",
+                "href_prefix": "whatsapp://send?phone=60123456789&text=",
+                "hint": "【】里两边留一边再发, 整句照发会露馅。"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "静置",
+      "rows": [
+        {
+          "id": "shopee-seller-broadcast",
+          "name": "Shopee MY 卖家公告群",
+          "emoji": "📢",
+          "tag": {
+            "label": "无待办",
+            "tone": "ns"
+          },
+          "dim": true,
+          "flag": false,
+          "num": "38",
+          "date": "08-18 07:30",
+          "chip": {
+            "label": "球在对方",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "群组 (广播, 只读)"
+            },
+            {
+              "k": "球在谁",
+              "v": "对方"
+            },
+            {
+              "k": "最后活动",
+              "v": "08-18 07:30"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-11 到 08-18, 38 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "官方单向广播, 群里没人 @ 你, 38 条全是活动报名和 banner 规格通知, 没有一条要回。不写草稿。9.9 报名截止 08-25, 那件事我另外记在你的促销备忘, 不用在这里处理。"
+            }
+          ]
+        },
+        {
+          "id": "syafiq-order-closed",
+          "name": "Syafiq Ismail",
+          "emoji": "",
+          "tag": {
+            "label": "无待办",
+            "tone": "ns"
+          },
+          "dim": true,
+          "flag": false,
+          "num": "8",
+          "date": "08-16 13:19",
+          "chip": {
+            "label": "球在对方",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "对方"
+            },
+            {
+              "k": "最后活动",
+              "v": "08-16 13:19"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-09 到 08-18, 8 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "补寄的替换瓶盖他 08-16 已经收到, 最后一句是「dah sampai, terima kasih boss」加一个赞。事情结了, 不需要再回一句客套话。不写草稿。"
+            }
+          ]
+        },
+        {
+          "id": "packaging-vendor-dead",
+          "name": "Tiong Seng 包装 (旧供应商)",
+          "emoji": "",
+          "tag": {
+            "label": "无待办",
+            "tone": "ns"
+          },
+          "dim": true,
+          "flag": false,
+          "num": "3",
+          "date": "07-29 16:05",
+          "chip": {
+            "label": "球在对方",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "一对一"
+            },
+            {
+              "k": "球在谁",
+              "v": "对方"
+            },
+            {
+              "k": "最后活动",
+              "v": "07-29 16:05"
+            },
+            {
+              "k": "读取窗",
+              "v": "06-20 到 08-18, 3 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "6 月换掉他们之后就没往来了, 最后三条是他们单方面发的中秋礼盒推销, 你一条都没回。这条线已经死了, 留着当纪录就好。不写草稿。"
+            }
+          ]
+        },
+        {
+          "id": "warehouse-team-group",
+          "name": "Ambun 仓库组",
+          "emoji": "",
+          "tag": {
+            "label": "无待办",
+            "tone": "ns"
+          },
+          "dim": true,
+          "flag": false,
+          "num": "52",
+          "date": "08-18 08:55",
+          "chip": {
+            "label": "球在对方",
+            "tone": "ns"
+          },
+          "gauges": [
+            {
+              "k": "类型",
+              "v": "群组 (4 人)"
+            },
+            {
+              "k": "球在谁",
+              "v": "对方"
+            },
+            {
+              "k": "最后活动",
+              "v": "08-18 08:55"
+            },
+            {
+              "k": "读取窗",
+              "v": "08-16 到 08-18, 52 条全读到",
+              "grow": true
+            }
+          ],
+          "blocks": [
+            {
+              "kind": "draft",
+              "title": "回覆草稿",
+              "note": "52 条都是日常出货 checklist 加打卡照, Ravi 08-18 早上已经把周末的单全部 clear 完并回报。没有人在等你答话。不写草稿。Sity 那单补寄要交代的时候再进来讲一句就够。"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "legend": "橙色 = 要你今天动手 · 灰色 = 已读过但没事要做<br>带红点的行代表有读不到的附件, 数字别当真<br>草稿全部可以改, 改完按钮会变成「用你改的版本」<br>群组没有号码, 只能复制去贴<br>⛔ 这是 mockup: 人名订单号全是编的, 深链一律指向 JW 自己的号码, 点了不会打扰到任何人"
+}
+</script>
+
+<header class="bar">
+  <h1 id="bar-title"></h1><span class="tag" id="bar-tag"></span>
+  <span id="bar-meta"></span>
+  <span class="sp"></span>
+  <span class="kv" id="bar-stamp"></span>
+  <span class="seg" id="seg">
+    <button data-t="system">系统</button><button data-t="light">浅</button><button data-t="dark">深</button>
+  </span>
+</header>
+
+<section class="gapstrip" id="notice"></section>
+
+<div class="shell">
+  <nav class="list"></nav>
+  <main class="stage"></main>
+</div>
+
+<script>
+/* 主题: 预设跟系统, 手动选了就记住。
+   ⛔ 深色的 token 在 CSS 里写了两次 (系统深色 + 手动深色); 少写一次这里会推不动。 */
+(function () {
+  const seg = document.getElementById('seg');
+  const paint = v => {
+    if (v === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', v);
+    [...seg.children].forEach(b => b.dataset.on = (b.dataset.t === v) ? '1' : '0');
+    try { localStorage.setItem('triage-theme', v); } catch (e) {}
+  };
+  let saved = 'system';
+  try { saved = localStorage.getItem('triage-theme') || 'system'; } catch (e) {}
+  paint(saved);
+  seg.addEventListener('click', ev => { if (ev.target.dataset.t) paint(ev.target.dataset.t); });
+})();
+
+const DATA = JSON.parse(document.getElementById('board-data').textContent);
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* ---- 顶栏 ---- */
+document.getElementById('bar-title').textContent = DATA.title || '';
+document.getElementById('bar-tag').textContent = DATA.tag || '';
+document.getElementById('bar-meta').innerHTML =
+  (DATA.meta || []).map(m =>
+    `<span class="kv${m.hot ? ' hot' : ''}">${esc(m.k)} <b>${esc(m.v)}</b></span>`).join('');
+document.getElementById('bar-stamp').textContent = DATA.stamp || '';
+
+/* ---- 警示条。⛔ 收起来也要看得见件数与 lead, 不然就变成静默漏掉 ---- */
+const strip = document.getElementById('notice');
+if (!DATA.notice) { strip.remove(); }
+else {
+  const n = DATA.notice;
+  strip.innerHTML =
+    `<button class="gaphead" id="notice-toggle">
+       <span class="mark">${esc(n.badge || '!')}</span>
+       <h4>${esc(n.title)}</h4>
+       <span class="lead">${esc(n.lead || '')}</span>
+       <span class="chev">展开</span>
+     </button>
+     <div class="gapbody">
+       <ul>${(n.items || []).map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+       ${n.footer ? `<p>${n.footer}</p>` : ''}
+     </div>`;
+  document.getElementById('notice-toggle').addEventListener('click', () => {
+    strip.classList.toggle('open');
+    strip.querySelector('.chev').textContent =
+      strip.classList.contains('open') ? '收起' : '展开';
+  });
+}
+
+/* ---- 左栏与右栏 ---- */
+const listEl = document.querySelector('.list');
+const stageEl = document.querySelector('.stage');
+let railHTML = '', stageHTML = '';
+
+(DATA.bands || []).forEach(band => {
+  const rows = band.rows || [];
+  if (!rows.length) return;
+  railHTML += `<div class="sect"><span>${esc(band.label)}</span><i>${rows.length}</i></div>`;
+  rows.forEach(r => {
+    const tone = (r.tag && r.tag.tone) || 'ns';
+    railHTML +=
+      `<button class="item${r.dim ? ' dim' : ''}${tone === 'accent' ? ' tone-accent-rail p1' : ''}" data-id="${esc(r.id)}">
+         <span class="i-head">
+           ${r.tag ? `<span class="pill tone-${esc(tone)}">${esc(r.tag.label)}</span>` : ''}
+           <span class="i-emo">${esc(r.emoji || '')}</span>
+           <span class="i-name">${esc(r.name)}</span>
+           ${r.flag ? '<span class="sq"></span>' : ''}
+           ${r.num != null ? `<span class="i-num">${esc(r.num)}</span>` : ''}
+         </span>
+         ${r.snippet ? `<span class="snip">${esc(r.snippet)}</span>` : ''}
+         <span class="i-foot">
+           ${r.chip ? `<span class="ball ${r.chip.tone === 'accent' ? 'bme' : 'bthem'}">${esc(r.chip.label)}</span>` : ''}
+           ${r.date ? `<span class="i-date">${esc(r.date)}</span>` : ''}
+         </span>
+       </button>`;
+
+    const left = [], right = [];
+    (r.blocks || []).forEach(b => {
+      if (b.kind === 'prose') {
+        left.push(
+          `<section class="mod glass">
+             <div class="mod-head"><h4>${esc(b.title)}</h4></div>
+             <div class="mod-body scroll">
+               <p class="prose">${esc(b.text)}</p>
+               ${b.warn ? `<div class="warnbox"><b>${esc(b.warn.title)}</b>${esc(b.warn.text)}</div>` : ''}
+             </div>
+           </section>`);
+      } else if (b.kind === 'list') {
+        const items = b.items || [];
+        left.push(
+          `<section class="mod glass${items.length ? '' : ' empty'}">
+             <div class="mod-head"><h4>${esc(b.title)}</h4>
+               <span class="mod-c">${items.length} 条</span></div>
+             <div class="mod-body scroll">
+               <ul class="ctx">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+             </div>
+           </section>`);
+      } else if (b.kind === 'draft') {
+        const a = b.action || {};
+        const has = !!b.text;
+        right.push(
+          `<section class="mod glass work${has ? '' : ' none'}">
+             <div class="mod-head"><h4>${esc(b.title)}</h4>
+               ${has ? '<span class="mod-c">可直接编辑</span>' : ''}
+               ${has ? `<span class="edited" id="e-${esc(r.id)}">已改</span>` : ''}</div>
+             <div class="mod-body work-body">
+               ${b.note ? `<p class="dnote">${esc(b.note)}</p>` : ''}
+               ${has ? `
+                 <textarea id="t-${esc(r.id)}" spellcheck="false" data-orig="${esc(b.text)}">${esc(b.text)}</textarea>
+                 <div class="bar2">
+                   <span class="cnt"><span id="c-${esc(r.id)}">0</span> 字</span>
+                   <button class="go${a.type === 'copy' ? ' copy' : ''}" data-for="${esc(r.id)}"
+                     data-a="${esc(a.label || '执行')}" data-b="${esc(a.label_dirty || a.label || '执行')}"
+                     ${a.href_prefix ? `data-href="${esc(a.href_prefix)}"` : ''}>${esc(a.label || '执行')}</button>
+                 </div>
+                 ${a.hint ? `<p class="gohint">${esc(a.hint)}</p>` : ''}`
+               : '<p class="dnote">这一条没有预写草稿。</p>'}
+             </div>
+           </section>`);
+      }
+    });
+
+    stageHTML +=
+      `<article class="panel" id="p-${esc(r.id)}">
+         <header class="phead glass">
+           <div class="ph-l">
+             ${r.tag ? `<span class="pill big tone-${esc(tone)}">${esc(r.tag.label)}</span>` : ''}
+             <h2 class="ptitle">${esc(r.emoji || '')} ${esc(r.name)}</h2>
+           </div>
+           <div class="gauges">
+             ${(r.gauges || []).map(g =>
+               `<div class="gauge${g.grow ? ' grow' : ''}"><span>${esc(g.k)}</span>
+                  <b${g.hot ? ' class="hot"' : ''}>${esc(g.v)}</b></div>`).join('')}
+           </div>
+         </header>
+         <div class="grid">
+           <div class="col">${left.join('')}</div>
+           <div class="col">${right.join('')}</div>
+         </div>
+       </article>`;
+  });
+});
+
+if (DATA.legend) railHTML += `<div class="legend">${DATA.legend}</div>`;
+listEl.innerHTML = railHTML;
+stageEl.innerHTML = stageHTML || '<div class="empty-hint">board-data 里没有任何 row。</div>';
+
+/* ---- 选取 ---- */
+const items = [...document.querySelectorAll('.item')];
+const panels = [...document.querySelectorAll('.panel')];
+function show(id) {
+  items.forEach(b => b.classList.toggle('is-on', b.dataset.id === id));
+  panels.forEach(p => p.classList.toggle('is-on', p.id === 'p-' + id));
+}
+items.forEach(b => b.addEventListener('click', () => show(b.dataset.id)));
+if (items.length) show(items[0].dataset.id);
+
+/* ---- 草稿: 改过就换样子, 连按钮的字都换掉 ---- */
+document.querySelectorAll('textarea').forEach(t => {
+  const id = t.id.slice(2);
+  const cnt = document.getElementById('c-' + id);
+  const tag = document.getElementById('e-' + id);
+  const btn = document.querySelector('.go[data-for="' + id + '"]');
+  const tick = () => {
+    const dirty = t.value !== t.dataset.orig;
+    if (cnt) cnt.textContent = t.value.length;
+    t.classList.toggle('dirty', dirty);
+    if (tag) tag.classList.toggle('on', dirty);
+    if (btn) btn.textContent = dirty ? btn.dataset.b : btn.dataset.a;
+  };
+  t.addEventListener('input', tick); tick();
+});
+
+/* ---- 动作: URL 在按下那一刻才组, 带走的一定是当下框里那个版本 ---- */
+function fire(btn) {
+  const t = document.getElementById('t-' + btn.dataset.for);
+  if (!t) return;
+  const text = t.value;
+  if (!btn.dataset.href) {
+    const back = btn.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '已复制 ✓';
+      setTimeout(() => btn.textContent = back, 1800);
+    });
+    return;
+  }
+  window.location.href = btn.dataset.href + encodeURIComponent(text);
+}
+document.querySelectorAll('.go').forEach(b => b.addEventListener('click', () => fire(b)));
+
+document.addEventListener('keydown', ev => {
+  if (ev.target.tagName === 'TEXTAREA') return;
+  const i = items.findIndex(b => b.classList.contains('is-on'));
+  if (['j','k','ArrowDown','ArrowUp'].includes(ev.key)) {
+    ev.preventDefault();
+    const down = (ev.key === 'j' || ev.key === 'ArrowDown');
+    const n = (i + (down ? 1 : -1) + items.length) % items.length;
+    show(items[n].dataset.id);
+    items[n].scrollIntoView({ block: 'nearest' });
+  } else if (ev.key === 'Enter') {
+    const btn = panels.find(p => p.classList.contains('is-on'))?.querySelector('.go');
+    if (btn) { ev.preventDefault(); fire(btn); }
+  }
+});
+</script>
+</body></html>
