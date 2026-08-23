@@ -41,3 +41,5 @@ The export is every one of your conversations in plain text, sitting in a folder
 ## License
 
 MIT
+
+This skill directs an AI agent running on your machine to read and modify your own files. Review what it proposes before approving it, keep backups of anything you care about, and note that everything here is provided as is, without warranty of any kind (see LICENSE).
