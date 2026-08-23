@@ -1,9 +1,9 @@
 ---
-name: whatsapp-triage
+name: breakthrough-whatsapp-triage
 description: Turns an overwhelming WhatsApp backlog into a one-page daily action board. The first run walks the user through a one-time export of their WhatsApp history onto their own computer, from an Android backup file or an iPhone local backup. Every later run filters that export to a recent window, works out which conversations actually need the user today, and generates an offline HTML triage board carrying a ready-to-edit draft reply for each one. Use when the user says triage my whatsapp, whatsapp backlog, whatsapp board, build my triage board, refresh my board, set up whatsapp export, help me clear whatsapp, or complains about hundreds of unread chats and not knowing where to start. Everything stays on their machine and nothing is ever sent automatically.
 ---
 
-# whatsapp-triage
+# breakthrough-whatsapp-triage
 
 Read this file first, every time. It routes and it forbids. It does not carry procedures, those live in the files it points at, and when this file disagrees with one of them the specific file wins and you fix this one in the same session.
 

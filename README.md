@@ -1,4 +1,4 @@
-# whatsapp-triage
+# breakthrough-whatsapp-triage
 
 A Claude Code skill that turns an overwhelming WhatsApp backlog into a one page action board.
 
@@ -7,7 +7,7 @@ Most of us have a WhatsApp list with a few hundred conversations and no way to t
 ## Install
 
 ```bash
-npx skills add breakthrough-edu/whatsapp-triage
+npx skills add breakthrough-edu/breakthrough-whatsapp-triage
 ```
 
 Then say "set up whatsapp export" to Claude Code and it walks you through the one time setup.
