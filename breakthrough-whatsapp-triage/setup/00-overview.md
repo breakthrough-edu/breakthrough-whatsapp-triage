@@ -86,3 +86,14 @@ Everything lands in one folder, created in `computer-prep.md`:
 Every later command assumes the user's terminal is sitting in that folder. When a paste looks wrong in a way you cannot explain, checking where they actually are (`pwd` on macOS, `cd` alone on Windows) is a cheap early probe.
 
 Setup finishes when that folder holds both `export.json` and a `config.json` saying `setup_complete`. Writing the config is the last step of each phone branch, and until it exists every future run drops the user back into setup. Do not declare setup done before it is written.
+
+## The voice profile, offered once at the finish line
+
+After `setup_complete` is written and while the export is still fresh, offer one more thing, once: "Want me to learn how you write, so every draft sounds like you instead of like an AI? Two minutes, from your own messages, and you approve every line." On a yes:
+
+1. Run `wa_voice.py --config config.json` (probe: it prints one line of counts, never content). It samples the user's own sent messages into `voice-corpus.json`.
+2. Read the corpus and draft `tov-profile.md`: one section for one-to-one chats, one for groups; each carries the language mix, particles, forms of address, openers and closers, emoji habits and usual length you actually observed, anchored with two or three of their own sampled sentences. Observed, never invented: a habit that is not in the corpus does not go in the profile.
+3. Show them the whole draft and let them strike or reword anything. It is their voice; they rule.
+4. Ask where it should live, default is beside the config, then record the path as `tov_profile` in `config.json`, date-stamp the profile, and tell them the one sentence that matters: every future board's drafts will read this file, and "update my tone profile" redraws it whenever their style moves.
+
+On a no: record `"tov_profile": null` in the config and never raise it at setup again; the triage skill answers "set up my tone profile" whenever they change their mind. A skipped profile costs nothing: drafts fall back to mirroring each counterpart, which is the original behaviour.

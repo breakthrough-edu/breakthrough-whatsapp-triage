@@ -1,6 +1,6 @@
 ---
 name: breakthrough-whatsapp-triage
-description: Turns an overwhelming WhatsApp backlog into a one-page daily action board with a ready-to-edit draft reply for each conversation that actually needs the user today. Everything stays on their machine, and nothing is ever sent automatically. Use when the user wants their WhatsApp triaged ("triage my whatsapp", "help me clear whatsapp", or complaining about hundreds of unread chats), wants the one-time export set up ("set up whatsapp export"), asks to refresh a board built on a stale export, asks to look further back or pull in one older conversation ("go back a week", "show me the last month"), hits a run that failed and needs diagnosing, or asks why the board behaves the way it does (why a row copies instead of opening, where a conversation or voice note went). The read window stays narrow by default and widens only on the user's explicit ask.
+description: Turns an overwhelming WhatsApp backlog into a one-page daily action board with a ready-to-edit draft reply for each conversation that actually needs the user today. Everything stays on their machine, and nothing is ever sent automatically. Use when the user wants their WhatsApp triaged ("triage my whatsapp", "help me clear whatsapp", or complaining about hundreds of unread chats), wants the one-time export set up ("set up whatsapp export"), asks for an update later the same day or to refresh a board built on a stale export, asks to look further back or pull in one older conversation ("go back a week", "show me the last month"), wants the drafts to sound like them ("set up my tone profile", "update my tone profile"), hits a run that failed and needs diagnosing, or asks why the board behaves the way it does (why a row copies instead of opening, where a conversation or voice note went). The read window stays narrow by default and widens only on the user's explicit ask.
 ---
 
 # breakthrough-whatsapp-triage
@@ -51,10 +51,14 @@ Run `wa_digest.py --config <config>`.
 
 - Nonzero exit, run `wa_doctor.py` and enter the troubleshooting protocol.
 - Exit 0 but the export is stale (`age_hours` past the threshold, default 48), tell the user the plain date their data stops at and offer the refresh ritual at the bottom of their platform's setup file. If the export ends before the window even opens, refuse to build a board of ghosts and say why.
+- Exit 0 and `boards/` already holds a board for today: this is an UPDATE, not a first build. The export is a snapshot, so if it has not been re-exported since that board was built, a rerun would redraw the same data and call it fresh. Say so in one plain sentence ("your data still stops at <time>; updating means a re-export first, a few minutes") and offer the refresh ritual. Only rebuild on the same export if the user says they want it anyway. After any same-day rebuild, read the earlier board's JSON first and open your report with what changed against it: which conversations are new to the board, which dropped off. The diff is what an afternoon rerun is actually for. ⛔ Same-day board files never overwrite: the second board of the day is `board-<date>-2.json` / `.html`, the third `-3`, matching the promise below that nothing is ever overwritten.
 - Otherwise go to TRIAGE.
 
 **TRIAGE**
-Read `references/triage-doctrine.md` and `references/board-schema.md`, then the digest file. Sort the chats, write the drafts, author the board JSON, run `wa_board.py`, open the result.
+Read `references/triage-doctrine.md` and `references/board-schema.md`, then the digest file. If a voice profile exists (the `tov_profile` path in `config.json`, else `tov-profile.md` in the working folder), read it before writing a single draft; the doctrine's drafts step says how it layers with per-chat mirroring. No profile is not a problem: mirror-only is the original behaviour, and the profile is a sharpener, never a prerequisite. Sort the chats, write the drafts, author the board JSON, run `wa_board.py`, open the result.
+
+**VOICE PROFILE, on ask ("set up my tone profile", "update my tone profile")**
+Run `wa_voice.py --config <config>`; it samples the user's own sent messages into `voice-corpus.json` (counts on stdout, content only in the file). Read the corpus, draft or redraft the profile per the doctrine's drafts step, and show it to the user whole: it is their voice, they rule on every line. On first creation ask where it should live, default `tov-profile.md` beside the config; whatever they choose, record the path as `tov_profile` in `config.json`. Stamp the profile with today's date. ⛔ Never regenerate it unasked, and never let it override the ten rules: it shapes how drafts sound, not what they may claim or commit.
 
 Then **always say the window out loud and offer to widen it.** This is required, not a nicety, and it is rule 10 below.
 
@@ -72,10 +76,12 @@ The skill directory holds code and doctrine only. Everything belonging to the us
 
 ```
 ~/Documents/WhatsApp-Triage/
-  config.json          platform, paths, window, ignored chats, freshness stamps
+  config.json          platform, paths, window, ignored chats, freshness stamps, tov_profile
   export.json          the raw export, large, never opened by you
+  tov-profile.md       how the user sounds, drafted from their own messages, user-ruled
+  voice-corpus.json    wa_voice.py's sample behind the profile, regenerated on ask
   digests/             digest-<date>-<N>d.json
-  boards/              board-<date>.json and board-<date>.html
+  boards/              board-<date>.json and board-<date>.html (same day again: -2, -3)
 ```
 
 Digests and boards are date-stamped, never overwritten, never auto-deleted. The user may want to look back at what last Monday actually demanded of them.
