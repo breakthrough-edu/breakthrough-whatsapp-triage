@@ -286,6 +286,14 @@ def candidate_paths(holder):
         found.append(("working folder", Path(config_dir).parent))
     system = platform.system()
     if system == "Darwin":
+        # The Mac app keeps its own plain SQLite store, and it does not care
+        # which phone the user carries. Looked at before the phone backups
+        # because it is the fast route when it is there.
+        groups = Path.home() / "Library" / "Group Containers"
+        found.append(("WhatsApp Desktop store",
+                      groups / "group.net.whatsapp.WhatsApp.shared"))
+        found.append(("WhatsApp Business Desktop store",
+                      groups / "group.net.whatsapp.WhatsAppSMB.shared"))
         found.append(("iPhone backups",
                       Path.home() / "Library" / "Application Support" / "MobileSync" / "Backup"))
     elif system == "Windows":
@@ -324,8 +332,12 @@ def section_candidates(holder):
         say("  %-26s %s" % ("", state))
         if state == "PERMISSION DENIED" or state.startswith("PERMISSION DENIED"):
             if platform.system() == "Darwin":
+                if holder.get("mac_store") and "MobileSync" in str(path):
+                    say("      not needed on the Mac Desktop route, the app's own "
+                        "store above is the source. No grant required.")
+                    continue
                 say(FULL_DISK_ACCESS_REMEDY)
-                note_failure("phone backup access")
+                note_failure("source access")
             continue
         if not state.startswith("EXISTS"):
             continue
@@ -337,10 +349,26 @@ def section_candidates(holder):
             entries = sorted(target.iterdir(), key=lambda item: item.name)
         except PermissionError:
             if platform.system() == "Darwin":
+                if holder.get("mac_store") and "MobileSync" in str(target):
+                    say("      not needed on the Mac Desktop route, the app's own "
+                        "store above is the source. No grant required.")
+                    continue
                 say(FULL_DISK_ACCESS_REMEDY)
-                note_failure("phone backup access")
+                note_failure("source access")
             continue
         except OSError:
+            continue
+        if "Group Containers" in str(target):
+            # The live store, written to while WhatsApp runs. Report only the
+            # two files the setup step copies, and never add them to the hits
+            # the [db] section opens: the snapshot in the working folder is
+            # what gets read. The other sixty odd files here are WhatsApp's
+            # own bookkeeping and are nobody's business.
+            for name in ("ChatStorage.sqlite", "ContactsV2.sqlite"):
+                state = stat_line(target / name)
+                say("      %-22s %s" % (name, state))
+                if name == "ChatStorage.sqlite" and state.startswith("EXISTS"):
+                    holder["mac_store"] = True
             continue
         if "MobileSync" in str(target):
             # Backup folders hold thousands of hash named files. Count them,
@@ -441,15 +469,16 @@ def section_db(holder):
                  if str(item).lower().endswith((".sqlite", ".db"))]
     if not databases:
         say("  no database file found yet, so there is nothing to open.")
-        say("  This is the layer that comes from your phone backup.")
-        note_failure("phone database")
+        say("  This is the layer that comes from your phone backup, or on a Mac")
+        say("  from the snapshot taken of the WhatsApp app's own store.")
+        note_failure("message database")
         return
     opened = 0
     for path in databases:
         if describe_db(path):
             opened += 1
     if opened == 0:
-        note_failure("phone database")
+        note_failure("message database")
 
 
 def section_export(holder, explicit):
@@ -603,8 +632,8 @@ def main(argv=None):
     run_section("pip", "pip", section_pip)
     run_section("exporter package", "package", section_package)
     run_section("config file", "workdir", section_workdir, args.config, holder)
-    run_section("phone backup access", "candidates", section_candidates, holder)
-    run_section("phone database", "db", section_db, holder)
+    run_section("source access", "candidates", section_candidates, holder)
+    run_section("message database", "db", section_db, holder)
     run_section("export file", "export", section_export, holder, args.export)
     head("verdict")
     section_verdict(holder)

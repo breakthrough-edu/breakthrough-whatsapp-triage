@@ -46,6 +46,8 @@ Look for `config.json` in the working folder (default `~/Documents/WhatsApp-Tria
 **Missing, or `setup_complete` is false, or the user asks to set up**
 Go to SETUP. Read `setup/00-overview.md` and follow it. Never improvise a setup step that is not written down. When the files run out, switch to the protocol in `setup/troubleshooting.md` rather than guessing.
 
+One routing fact worth holding before you open that file, because getting it wrong costs the user an hour: **ask about the computer before the phone.** On a Mac with the WhatsApp app signed in, the app's own database is readable and setup is about two minutes, whatever phone they carry. An Android user on a Mac belongs on the Mac route, not the Android one.
+
 **Present and complete**
 Run `wa_digest.py --config <config>`.
 

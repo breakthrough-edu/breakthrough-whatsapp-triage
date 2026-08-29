@@ -2,7 +2,9 @@
 
 Load this only when a probe has actually failed. It is written to you, the session, not to the user.
 
-Two of the three paths in this skill have never been run end to end on a real phone. You will meet symptoms nobody wrote down. Section A is how to navigate those by reasoning. Sections B and C are the shortcuts for the ones that were catalogued.
+The Mac Desktop route has been run end to end on a real machine. **The two phone routes have not**, so on those you will meet symptoms nobody wrote down. Section A is how to navigate those by reasoning. Sections B and C are the shortcuts for the ones that were catalogued.
+
+**Before deep debugging a phone route, ask one question: is the computer a Mac?** If it is, and WhatsApp can be signed in on it, `mac-desktop.md` reaches the same file in about two minutes and skips every layer you are currently fighting. That is a route change, not a workaround, and it is the single highest value move in this file.
 
 ---
 
@@ -76,6 +78,7 @@ Instead, do these three things in one message:
 2. **Propose the alternate route** rather than more debugging:
    - **A different computer.** Most often the fastest real fix, especially for iPhone on Windows. A machine that already has Finder or Apple Devices working, or a household Windows PC, skips the whole broken layer.
    - **A different backup style.** Android: an older `msgstore.db.crypt14` file already sitting in the Databases folder, which the tool also reads. iPhone: an unencrypted backup instead of fighting a forgotten encryption password.
+   - **A Mac in the room.** On any Mac with the WhatsApp app signed in, `mac-desktop.md` bypasses the phone entirely, whatever phone they carry. If a phone route has burned three hypotheses and a Mac is available, this is the first thing to offer, not the last.
    - **A narrower export.** WhatsApp's own per chat "Export chat" produces a text file, and the tool reads that with `-e`. It is one conversation at a time and manual, so it is a fallback, not the plan, but for a user who only needs their three busiest chats it beats an abandoned setup.
 3. **Say plainly that setup is paused, not failed,** and name what would unblock it. Users forgive a stuck setup. They do not forgive an hour of silent flailing.
 
@@ -109,8 +112,8 @@ The doctor also prints its own `FIX` and `NEXT` lines. They are usually right, w
 | `[pip]` | `import pip : yes`, `pip runs : exit 0` | no pip means that interpreter is unusable, reinstall Python rather than fighting it |
 | `[package]` | the package present for this Python at 0.13.0 | `NOT installed for this Python` while the user insists pip succeeded is the two Pythons problem, see C2.1. A version other than 0.13.0 means an unpinned install, reinstall the pin |
 | `[workdir]` | the config file is found | before the config step of the phone branch, `not found` is expected, see the false alarms below |
-| `[candidates]` | the expected input listed as `EXISTS` with a plausible size and a recent date | `PERMISSION DENIED` on macOS is Full Disk Access, and the doctor prints the full recipe itself. A file that is 0 bytes or a few kilobytes means a failed copy, redo the transfer |
-| `[db]` | `opens : yes`, a table list, and row counts with a date range | `opens : NO` means the file is not a database, usually a truncated copy or a still encrypted file |
+| `[candidates]` | the expected input listed as `EXISTS` with a plausible size and a recent date. On a Mac, `WhatsApp Desktop store` with a `ChatStorage.sqlite` of tens of MB is the fast route confirming itself | `PERMISSION DENIED` on macOS is Full Disk Access, and the doctor prints the full recipe itself, but read the false alarms below before asking for a grant. A file that is 0 bytes or a few kilobytes means a failed copy, redo the transfer |
+| `[db]` | `opens : yes`, a table list, and row counts with a date range. On the Mac route this is the snapshot in the working folder, and its date range is the ceiling answer for that user | `opens : NO` means the file is not a database, usually a truncated copy or a still encrypted file |
 | `[export]` | `parses : yes`, `chats` and `messages` above zero, `newest` dated today | `parses : NO` means a half written export, rerun it. A `newest` date well in the past means the export never actually reran |
 
 ## Four false alarms in this report, do not chase them
@@ -119,6 +122,8 @@ The doctor also prints its own `FIX` and `NEXT` lines. They are usually right, w
 2. **`wtsexporter : NOT on PATH` in `[package]`.** Informational. These docs never use that command, and the `best call` line the doctor prints next to it is the form to use.
 3. **`[db]` finding nothing on the iPhone branch.** That block only opens files whose names end in `.sqlite` or `.db`. On iPhone the extracted message database has a long hash filename with no extension, so an empty `[db]` is normal there. Judge the iPhone branch by `[export]`.
 4. **The `[package]` FIX line omits the crypto extra.** It suggests the plain pinned install. On Android that produces a decryption failure one step later. Use the form from `computer-prep.md` Step 5 instead, with `[crypt15]` included.
+5. **`iPhone backups: PERMISSION DENIED` on a healthy Mac Desktop setup.** Measured behaviour, not a fault: on macOS the WhatsApp app's own folder reads without Full Disk Access while the iPhone backup folder does not. When the desktop store above it is `EXISTS`, the doctor says so itself and does not count it as a failure. Never ask for a Full Disk Access grant to clear this line, the route does not use that folder.
+6. **The live store is never opened.** `[candidates]` reports `ChatStorage.sqlite` inside the app's folder by size and date only, and `[db]` reads the snapshot in the working folder instead. A live store with a newer date than the snapshot is not an error, it is the signal that a refresh is due.
 
 ## Two comparisons worth making by eye
 
@@ -154,6 +159,11 @@ Match on the exact text in the paste. Where two causes share one symptom, the di
 | export succeeds, but far fewer messages than expected | the ceiling, the phone no longer holds that history | ask when they last switched phones, reinstalled WhatsApp, or cleared chats | not a bug, do not debug it, see C2.4 |
 | the digest reports zero messages in the window | `export.json` is stale, the export never actually reran | compare the modification date of `export.json` against the backup date | rerun the refresh ritual from the phone branch |
 | the digest crashes on an unexpected field shape | tool version drift, an unpinned or upgraded install | rerun the digest with `--dump-bad 3`, and `python3 -m pip show whatsapp-chat-exporter` | reinstall the pin `==0.13.0` and re-export, this is exactly what the pin exists to prevent |
+| `No such file or directory` on `~/Library/Group Containers/group.net.whatsapp.WhatsApp.shared/` | the WhatsApp Mac app is not installed, or has never been signed in on this Mac | `ls -d ~/Library/Group\ Containers/group.net.whatsapp.*` and ask whether WhatsApp opens on the Mac showing their chats | install and sign in, or take the phone route, `mac-desktop.md` Step M1 has both |
+| the Mac store exists but `ChatStorage.sqlite` is a few hundred KB, or months old | signed out on the Mac, or the first sync never finished | ask them to open WhatsApp on the Mac and watch the chat list fill | leave it open until it settles, then retake the snapshot |
+| `[db]` date range on the Mac route starts recently, user expected years | the Mac received only part of the history when it was linked | read the oldest date out of `[db]`, ask when the Mac was linked | not a fault and nothing deepens it here, the phone holds more, `mac-desktop.md` Step M4 |
+| the board stops a few hours short of now on the Mac route | the snapshot was copied with `cp` while WhatsApp was writing, so the write ahead log was left behind | check whether the snapshot command used `sqlite3 ... .backup` | retake it with the `.backup` form in `mac-desktop.md` Step M2, never a plain copy |
+| Mac export runs but the working folder starts filling with gigabytes | `-m` got into the command, it is copying the media tree, 7.1 GB on the measured machine | read the typed command back | stop it, delete the partial media folder, rerun the line exactly as written in Step M3 |
 | link buttons in the output do nothing when clicked | WhatsApp Desktop is not installed, so the desktop link scheme has nothing to open | ask whether the WhatsApp desktop app is installed and opens | set the config `link_style` to `web` |
 | `Copying media directory...` sits there for many minutes | it is duplicating the media tree, which can be gigabytes | check the size of the output folder twice, a minute apart, is it growing | it is working, wait. If space is tight, rerun with `-c` to move instead of copy |
 | `JSONDecodeError` reading `export.json` | the export was interrupted, so the file is truncated | check the file size, and whether the run ever printed `Everything is done!` | rerun the export, do not try to repair the file |
@@ -176,6 +186,8 @@ Confirm with the `Location:` line from `python3 -m pip show whatsapp-chat-export
 ### C2.2 macOS Full Disk Access
 
 Symptom: `Operation not permitted`, or the tool's own permission message. It is a real, reproduced restriction, not a broken file.
+
+**First, check it is even the right question.** This grant belongs to the iPhone backup route. On the Mac Desktop route the app's own folder was measured readable with no grant at all, so a permission error there is unusual and worth rereading the path for a typo before handing a terminal access to every file on the machine.
 
 The recipe is in `computer-prep.md` Step 7. When it has already been tried and the symptom persists, the failure is almost always step 4 of that recipe:
 

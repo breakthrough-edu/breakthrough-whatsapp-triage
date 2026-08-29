@@ -1,8 +1,10 @@
 # Computer prep
 
-Everyone does this before touching the phone. End state: a terminal the user can work in, Python 3.10 or newer, the export tool pinned at 0.13.0 with crypto support, one working folder, and (on Mac, for iPhone users) Full Disk Access granted.
+Everyone does this first, whichever route they are on. End state: a terminal the user can work in, Python 3.10 or newer, the export tool pinned at 0.13.0 with crypto support, one working folder, and on a Mac, Full Disk Access granted.
 
-Do not skip ahead to the phone branch. Failures here are cheap to find. The same failure discovered after a 40 minute backup is expensive and demoralizing.
+Do not skip ahead to the branch file. Failures here are cheap to find. The same failure discovered after a 40 minute backup is expensive and demoralizing.
+
+**On the Mac Desktop route this file is most of the work.** Steps 1 to 8 are the setup, and `mac-desktop.md` after it is about two minutes. So do not rush this to get to the "real" part, there is no bigger part coming.
 
 ## The command translation, settle it once
 
@@ -137,13 +139,32 @@ Ask for the last three lines only, they are enough and they carry the version.
 
 Note the capital letters and the underscores in `Whatsapp_Chat_Exporter`. It is spelled exactly that way, and a lowercase or hyphenated version will fail. If a paste shows a slightly different spelling in the typed line, that is your answer, no further diagnosis needed.
 
-## Step 7: macOS Full Disk Access (iPhone users on a Mac only)
+## Step 7: macOS folder access (every Mac user, one probe each)
 
-Skip this entirely for Android, and for iPhone users on Windows.
+Skip this entirely on Windows.
 
-An iPhone backup lives in a folder that macOS protects. A terminal cannot read it until the user grants Full Disk Access, and this was reproduced directly: without it, reading that folder returns `Operation not permitted` and the export tool exits with a permission error.
+The two Mac routes are not equally locked down, and this was measured on 2026-08-29 from one terminal that had **no** Full Disk Access:
 
-**Probe first, do not grant blindly:**
+- the WhatsApp app's own folder read fine, listing all 67 items,
+- the iPhone backup folder returned `Operation not permitted`, as did Messages.
+
+So: **the Mac Desktop route usually needs no permission grant at all**, and the iPhone backup route reliably does. Probe rather than grant. Asking for a Full Disk Access grant that the route does not need is a real cost, it hands a terminal the keys to every file on the machine for nothing.
+
+**Probe first, do not grant blindly.** Run the one for their route.
+
+**Mac Desktop route:**
+
+```
+ls -lh ~/Library/Group\ Containers/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
+```
+
+| What came back | Conclusion |
+|---|---|
+| one line, tens or hundreds of MB, recent date | nothing to grant, this is the expected result, go to `mac-desktop.md` |
+| `No such file or directory` | nothing to grant either, the app is simply not installed or never signed in, go to `mac-desktop.md` Step M1, which handles exactly this |
+| `Operation not permitted` | this machine does protect that folder, do the grant below, then rerun the probe |
+
+**iPhone backup route:**
 
 ```
 ls ~/Library/Application\ Support/MobileSync/Backup/
@@ -155,6 +176,8 @@ ls ~/Library/Application\ Support/MobileSync/Backup/
 | a long folder name of letters and numbers, or several | access is fine and a backup already exists, go to `iphone.md` |
 | `No such file or directory` | access may be fine but no local backup has ever been made, go to `iphone.md` and make one |
 | an empty result with no error | access is fine, no backups yet, go to `iphone.md` |
+
+**Android phone on a Mac:** you should not be here at all if the Mac has the WhatsApp app, see the routing table in `00-overview.md`. If they are genuinely taking the phone route, this step is not needed for reading the phone's storage.
 
 **The grant, if needed.** Walk them through it one line at a time and confirm each:
 
@@ -180,8 +203,10 @@ Run it from this skill's `scripts/` folder, or give the full path to it. Ask for
 
 - `[os]`, `[python]`, `[pip]` and `[package]` all healthy, with `[package]` showing 0.13.0
 - `[workdir]` reporting `config : not found`
-- `[candidates]`, `[db]` and `[export]` finding nothing yet
+- `[db]` and `[export]` finding nothing yet
 - `[verdict]` reading `SETUP INCOMPLETE AT config file`
+
+`[candidates]` differs by route. On a Mac it names the WhatsApp Desktop store, and seeing it `EXISTS` with a recent date before any export is exactly what you want, it is the fast route confirming itself. `PERMISSION DENIED` there is Step 7, not a missing app. On a phone route, finding nothing yet is the normal state.
 
 That verdict is the correct state before any phone backup exists. The config file is written at the end of the phone branch. What matters here is that every block above `[workdir]` is clean.
 
@@ -197,8 +222,8 @@ Before leaving this file, you should be able to state all five:
 2. `Version: 0.13.0` seen in a paste,
 3. the working folder path from `pwd`,
 4. a doctor report whose only failure is `config file`,
-5. for iPhone on Mac, the MobileSync folder listed without a permission error.
+5. on a Mac, the Step 7 probe for their route answered without a permission error.
 
 If any of those is missing, you are not done here, whatever the user says.
 
-Then load `android.md` or `iphone.md`. Tell the user what happens next and roughly how long it takes, so the phone step does not arrive as a surprise.
+Then load `mac-desktop.md`, `android.md` or `iphone.md`. Tell the user what happens next and roughly how long it takes: two minutes on the Mac route, and on a phone route the backup is the long part, so it does not arrive as a surprise.

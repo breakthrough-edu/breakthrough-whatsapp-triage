@@ -2,9 +2,11 @@
 
 Load this when the user asks where a conversation went, why voice notes are invisible, why a chat looks like it starts in the middle, or how big a window to run. Every limit here is a property of WhatsApp's own data, not a shortcoming of this skill, and saying so plainly is better than working around it quietly.
 
-## The ceiling: only what the phone still holds
+## The ceiling: only what the source still holds
 
-WhatsApp keeps message history on the device, not on a server it will hand back to you. The export contains what the phone still has, and nothing else.
+WhatsApp keeps message history on the device, not on a server it will hand back to you. The export contains what the source still has, and nothing else.
+
+**Which source depends on the setup route, and so does the ceiling.** On a phone route it is the phone's own store. On the Mac Desktop route it is the copy the WhatsApp Mac app keeps, which holds whatever history arrived when that Mac was linked plus everything since. On the measured machine that was the full library, 73,723 messages back to 2014-07-10, from an app folder created in 2025. Do not generalise that number in either direction: `setup/mac-desktop.md` Step M4 reads the real oldest date off the machine, and if it starts recently, the phone still holds more and the phone route is the way to reach it.
 
 Unrecoverable by this skill, by any other tool, and by WhatsApp support:
 
