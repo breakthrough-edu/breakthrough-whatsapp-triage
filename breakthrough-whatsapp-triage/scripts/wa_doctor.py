@@ -32,6 +32,12 @@ from pathlib import Path
 
 APPLE_EPOCH = 978307200  # Core Data counts seconds from 2001-01-01
 
+# "dense from" in [db]: a month counts as full history when it holds at least
+# a tenth of a typical recent month, and below DENSE_FLOOR messages in a
+# typical month leftovers and history cannot be told apart.
+DENSE_SHARE = 10
+DENSE_FLOOR = 50
+
 FULL_DISK_ACCESS_REMEDY = """  macOS blocked this folder. Grant Full Disk Access, then run this again:
     1. Open System Settings, then Privacy and Security, then Full Disk Access.
     2. Switch on the app you are running this from (Terminal, iTerm, or your editor).
@@ -440,11 +446,77 @@ def describe_db(path):
             except Exception:
                 pass
         say(line)
+        if table == "ZWAMESSAGE" and count:
+            try:
+                describe_depth(connection)
+            except Exception as err:
+                say("      per year    : count failed (%s)" % err)
     try:
         connection.close()
     except Exception:
         pass
     return True
+
+
+def describe_depth(connection):
+    """Where the full history starts, from counts per month. Never message text.
+
+    On the Mac route the oldest date is usually a scattered leftover from
+    years back: a linked Mac receives about one year of history, plus a few
+    stray older messages. So MIN(date) says nothing about depth. Full history
+    shows up as an unbroken run of busy months ending at the newest one; the
+    first month of that run is the estimate printed here.
+    """
+    months = {}
+    for month, count in connection.execute(
+            "SELECT strftime('%%Y-%%m', ZMESSAGEDATE + %d, 'unixepoch', 'localtime'), "
+            "COUNT(*) FROM ZWAMESSAGE WHERE ZMESSAGEDATE > 0 GROUP BY 1" % APPLE_EPOCH):
+        if month:
+            months[month] = count
+    if not months:
+        return
+    years = {}
+    for month, count in months.items():
+        years[month[:4]] = years.get(month[:4], 0) + count
+    cells = ["%s: %d" % (year, years[year]) for year in sorted(years)]
+    for start in range(0, len(cells), 6):
+        say("      %-14s%s" % ("per year    :" if start == 0 else "",
+                               ",  ".join(cells[start:start + 6])))
+
+    # Walk calendar months back from the newest, gaps counting as zero. The
+    # newest month is usually partial, so it is neither the yardstick nor
+    # allowed to break the run.
+    newest = max(months)
+    oldest = min(months)
+    calendar = []
+    year, month = int(newest[:4]), int(newest[5:])
+    while True:
+        key = "%04d-%02d" % (year, month)
+        calendar.append(key)
+        if key <= oldest:
+            break
+        month -= 1
+        if month == 0:
+            year, month = year - 1, 12
+    recent = sorted(months.get(key, 0) for key in calendar[1:13]) or [months[newest]]
+    typical = recent[len(recent) // 2]
+    if typical < DENSE_FLOOR:
+        say("      dense from  : cannot tell, about %d messages in a typical recent month "
+            "is too few to separate full history from leftovers" % typical)
+        return
+    threshold = max(typical // DENSE_SHARE, 1)
+    start = newest
+    for key in calendar[1:]:
+        if months.get(key, 0) < threshold:
+            break
+        start = key
+    if start == oldest:
+        say("      dense from  : %s, the oldest month, every month since holds %d or more"
+            % (start, threshold))
+        return
+    older = sum(count for key, count in months.items() if key < start)
+    say("      dense from  : %s (estimate), every month since holds %d or more; "
+        "the %d message(s) before it are scattered leftovers" % (start, threshold, older))
 
 
 def stamp_text(value, kind):

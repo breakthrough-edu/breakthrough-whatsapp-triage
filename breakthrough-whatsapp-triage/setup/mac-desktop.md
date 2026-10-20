@@ -119,22 +119,24 @@ Run it from this skill's `scripts/` folder, or give the full path.
 Good output:
 
 - `[candidates]` shows the WhatsApp Desktop store as `EXISTS` with a recent date, and the working folder holding both snapshots.
-- `[db]` opens `ChatStorage.sqlite`, reports `ZWAMESSAGE` with a row count and a date range.
+- `[db]` opens `ChatStorage.sqlite`, reports `ZWAMESSAGE` with a row count and a date range, then a `per year` line and a `dense from` line.
 - `[export]` reports `parses : yes`, `chats` and `messages` above zero, and `newest` dated today.
 
-**Do not quote the oldest date in `[db]` as the answer.** On this route it is usually one of the scattered leftovers described at the top of this file, not the start of the history. One more line finds the real start. Run it from the working folder, against the snapshot, never the live file. It prints a count per year and no message text at all:
+**Do not quote the oldest date in `[db]` as the answer.** On this route it is usually one of the scattered leftovers described at the top of this file, not the start of the history. The two lines under it find the real start, from the snapshot in the working folder, with counts only and no message text. `per year` shows the shape: a run of years in the tens or low hundreds, then a sudden year in the thousands. `dense from` names the month where that jump happens, the first month of the unbroken run of busy months that reaches today, and counts the leftovers before it. The shape, with invented numbers:
 
 ```
-sqlite3 ChatStorage.sqlite "SELECT strftime('%Y', ZMESSAGEDATE + 978307200, 'unixepoch') AS year, COUNT(*) FROM ZWAMESSAGE WHERE ZMESSAGEDATE > 0 GROUP BY year;"
+      ZWAMESSAGE  : 69060 row(s), messages from 2016-02-11 to <today>
+      per year    : 2016: 9,  2017: 41,  2018: 63,  2019: 88,  2020: 152,  2021: 20497
+                    2022: 48210
+      dense from  : 2021-03 (estimate), every month since holds 400 or more; the 353 message(s) before it are scattered leftovers
 ```
 
-**Good output** is one line per year, such as `2019|127`. Read it for the jump: a run of years in the tens or low hundreds, then a sudden year in the thousands. That jump is where the full history starts, and it should land about a year before the Mac was linked. The years before it are leftovers, not history.
-
-| What came back | Conclusion |
+| What `dense from` says | Conclusion |
 |---|---|
-| a sharp jump, landing about a year before they linked the Mac | expected, this is the normal shape |
-| every year in the thousands, back as far as it goes | more than this file expects, say what you see and move on |
-| only the current year or two, no jump | a recently linked Mac, or a light account, either way it is what the Mac holds |
+| a month about a year before they linked the Mac, with leftovers counted before it | expected, this is the normal shape |
+| `the oldest month`, and that month is years back | more than this file expects, say what you see and move on |
+| `the oldest month`, within the last year or so | a recently linked Mac with no leftovers, it is what the Mac holds |
+| `cannot tell` | a light account, too few messages a month to separate history from leftovers. Read the `per year` line for the jump by eye, and if there is none, say how far back the busy years go |
 
 **That start point is the ceiling conversation, and it belongs to the user, not to you.** Tell them in one plain sentence that their Mac holds their full history from about that point, roughly a year before it was linked, plus a few stray older messages. Then let them react. For triage, which reads the last few days, that is the whole conversation. If they want anything older, it is not a fault and nothing on the Mac can deepen it: the phone holds it, and the phone route is the way to reach it, an iPhone backup through `iphone.md` or the phone's database through `android.md`. Offer that as a choice, not as a failure, and only if the older history actually matters for what they asked for.
 
