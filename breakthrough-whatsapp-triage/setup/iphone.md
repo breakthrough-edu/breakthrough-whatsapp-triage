@@ -1,5 +1,5 @@
 # iPhone branch
-**Before anything else: is the computer a Mac?** If it is, and WhatsApp is or can be signed in on that Mac, stop here and go to `mac-desktop.md`. The Mac app keeps its own readable copy of the history, which reaches the same `export.json` in about two minutes with no cable and no backup, and it does not care which phone the user carries. This branch is for a computer that cannot do that.
+**Before anything else: is the computer a Mac?** If it is, and WhatsApp is or can be signed in on that Mac, stop here and go to `mac-desktop.md`. The Mac app keeps its own readable copy of roughly the last year of history, which reaches the same `export.json` in about two minutes with no cable and no backup, and it does not care which phone the user carries. This branch is for a computer that cannot do that, **and for anyone who needs messages older than about a year.** A linked Mac never receives more than that, plus a few scattered leftovers, so the full history on the phone is reachable only through the backup this branch makes, on a Mac as much as anywhere else.
 
 End state: a local (not iCloud) device backup on the computer, and the tool pointed straight at that backup folder to produce `export.json`.
 

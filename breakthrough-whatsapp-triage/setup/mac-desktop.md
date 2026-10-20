@@ -16,11 +16,13 @@ Measured end to end on a real Mac, 2026-08-29, WhatsApp Mac app 26.28.75:
 |---|---|
 | Snapshot of the live database | 0.3 seconds, 74 MB |
 | Export to JSON | 1.2 seconds, 32 MB |
-| What came out | 73,723 messages, 1,350 conversations, oldest message 2014-07-10 |
+| What came out | 73,723 messages, 1,350 conversations: full history for the year before the Mac was linked, plus a scattered handful of older messages reaching back years |
 
 This is the one route in this skill that has been run end to end, more than once, on a real machine. Say that plainly if the user asks how much to trust it. It is also the reason this branch has fewer honesty caveats than the two phone branches, not a sign that it was tested less.
 
-**The one thing not to promise: how far back the Mac's copy goes.** The Mac app receives history from the phone when it is linked, then keeps everything that arrives after that. On the measured machine the copy went back to 2014 even though the app's own folder was created in 2025, so the link had pulled the lot. Whether that holds on every account and every phone is not something this file knows. Step M4 reads the real oldest date off the machine in front of you, and that number is the answer for that user. Do not quote 2014 to anyone, and do not tell an Android user their history will be shallower either. Read it, then say it.
+**The one thing not to promise: years of history. The Mac's copy holds about one year.** When the Mac app is linked, the phone sends it roughly the last year of messages, then the Mac keeps everything that arrives after that. WhatsApp's own description of linked devices matches: they receive up to one year of chat history. Anything older comes across only as scattered leftovers, a few stray messages in some old conversations and rarely more than a dozen in any one. So the oldest date in the Mac's copy can sit years back while the real history starts about a year before the day the Mac was linked. On the measured machine the oldest message was from 2014, yet complete history began exactly 365 days before the link.
+
+Two consequences. Never read the oldest date as depth, and never tell anyone their years of history are on the Mac. And for anything older than about a year, the phone is the only source: an iPhone backup through `iphone.md`, or the phone's own database through `android.md`. For triage none of this matters, since the window is days, not years. Expect the same limit whichever phone they carry, and let Step M4 confirm it on the machine in front of you.
 
 ## Step M1: confirm the app's database is there
 
@@ -106,7 +108,7 @@ Two lines in that output surprise people, and neither is a fault:
 
 Ask for the full paste including the typed command. Do not open `export.json` to check it, and do not write a one liner that reads it. It is tens of megabytes and it must never enter your context. The doctor reports what you need.
 
-## Step M4: prove it, then say the oldest date out loud
+## Step M4: prove it, then say how far back it really goes
 
 ```
 python3 wa_doctor.py
@@ -120,7 +122,21 @@ Good output:
 - `[db]` opens `ChatStorage.sqlite`, reports `ZWAMESSAGE` with a row count and a date range.
 - `[export]` reports `parses : yes`, `chats` and `messages` above zero, and `newest` dated today.
 
-**The date range in `[db]` is the ceiling conversation, and it belongs to the user, not to you.** Tell them the oldest date their Mac's copy holds, in one plain sentence, and let them react. If it reaches back years, that is the whole ceiling question answered and nothing more needs saying. If it starts a few months ago, that is what the Mac received when it was linked, it is not a fault and nothing here can deepen it: the phone holds more, and the phone route in `android.md` or `iphone.md` is the way to reach it. Say that as a choice, not as a failure, and only if the shallow date actually matters for what they asked for. For triage of the last three days it never does.
+**Do not quote the oldest date in `[db]` as the answer.** On this route it is usually one of the scattered leftovers described at the top of this file, not the start of the history. One more line finds the real start. Run it from the working folder, against the snapshot, never the live file. It prints a count per year and no message text at all:
+
+```
+sqlite3 ChatStorage.sqlite "SELECT strftime('%Y', ZMESSAGEDATE + 978307200, 'unixepoch') AS year, COUNT(*) FROM ZWAMESSAGE WHERE ZMESSAGEDATE > 0 GROUP BY year;"
+```
+
+**Good output** is one line per year, such as `2019|127`. Read it for the jump: a run of years in the tens or low hundreds, then a sudden year in the thousands. That jump is where the full history starts, and it should land about a year before the Mac was linked. The years before it are leftovers, not history.
+
+| What came back | Conclusion |
+|---|---|
+| a sharp jump, landing about a year before they linked the Mac | expected, this is the normal shape |
+| every year in the thousands, back as far as it goes | more than this file expects, say what you see and move on |
+| only the current year or two, no jump | a recently linked Mac, or a light account, either way it is what the Mac holds |
+
+**That start point is the ceiling conversation, and it belongs to the user, not to you.** Tell them in one plain sentence that their Mac holds their full history from about that point, roughly a year before it was linked, plus a few stray older messages. Then let them react. For triage, which reads the last few days, that is the whole conversation. If they want anything older, it is not a fault and nothing on the Mac can deepen it: the phone holds it, and the phone route is the way to reach it, an iPhone backup through `iphone.md` or the phone's database through `android.md`. Offer that as a choice, not as a failure, and only if the older history actually matters for what they asked for.
 
 ## Step M5: write the config file, which is what marks setup as done
 

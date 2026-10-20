@@ -15,7 +15,7 @@ Then say "set up whatsapp export" to Claude Code and it walks you through the on
 ## How it works
 
 1. **Once**, you export your WhatsApp history onto your own computer. Claude walks you through it and debugs alongside you when your machine does something the guide did not predict.
-   - **On a Mac with the WhatsApp app signed in, this takes about two minutes**, no cable and no phone backup, because the Mac app keeps its own readable copy of your history. This works the same whether your phone is an Android or an iPhone.
+   - **On a Mac with the WhatsApp app signed in, this takes about two minutes**, no cable and no phone backup, because the Mac app keeps its own readable copy of roughly the last year of your history, far more than triage needs. This works the same whether your phone is an Android or an iPhone.
    - **Otherwise it goes through the phone**, an Android backup file or an iPhone local backup, which takes closer to an hour the first time.
 2. **Every run after that**, a script filters that export down to the last **3 days**, Claude reads the result and decides what needs you, and you get an offline HTML board.
 
@@ -27,7 +27,7 @@ One to one conversations get a button that opens WhatsApp with the draft already
 
 - **It never sends anything.** Buttons build a link or copy text. The last action is always yours.
 - **It never leaves your computer.** No upload, no API, no account linking, no third party service.
-- **It cannot recover what the source no longer holds.** An export contains what is still on the phone, or on the Mac that WhatsApp synced to. Chats cleared years ago, or lost in a phone migration, are gone, and no tool brings them back.
+- **It cannot recover what the source no longer holds.** An export contains what is still on the phone, or on the Mac that WhatsApp synced to, and a linked Mac only receives about the last year. Chats cleared years ago, or lost in a phone migration, are gone, and no tool brings them back.
 - **It does not read WhatsApp live.** It reads a snapshot you took, so refreshing means taking a new one.
 
 ## Requirements

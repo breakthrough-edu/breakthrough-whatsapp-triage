@@ -4,7 +4,7 @@ You are a Claude Code session guiding one person, live, through a one time expor
 
 There are two very different kinds of setup here, and the routing question at the bottom decides which one this user gets.
 
-- **On a Mac with the WhatsApp app signed in, it is about two minutes**, no cable and no phone backup, because the Mac app keeps its own readable copy of the history. **This holds whatever phone they carry, Android or iPhone.**
+- **On a Mac with the WhatsApp app signed in, it is about two minutes**, no cable and no phone backup, because the Mac app keeps its own readable copy of roughly the last year of history, far more than triage reads. **This holds whatever phone they carry, Android or iPhone.**
 - **Everywhere else it goes through the phone**, which is 40 to 60 minutes and several places to get stuck.
 
 | File | Load it when |
@@ -45,7 +45,7 @@ Chats they cleared years ago, and history lost when they switched phones or rein
 
 Two related facts, so nobody reaches for a shortcut that is not there. WhatsApp Web in a browser holds only a live view, with nothing on disk to export, and the official Business API carries no history at all.
 
-**The WhatsApp Mac app is the exception, and it is not a shortcut, it is this skill's fast route.** It keeps its own database on the Mac: whatever history arrived when the Mac was linked, plus everything since. How deep that reaches is a property of that machine, not something to assume in either direction. On the measured Mac it went back to 2014 even though the app folder was created in 2025. `mac-desktop.md` Step M4 reads the real oldest date off the machine and hands it to the user. If it turns out to be shallower than they need, the phone still holds more and the phone route is how to reach it.
+**The WhatsApp Mac app is the exception, and it is not a shortcut, it is this skill's fast route.** It keeps its own database on the Mac: about one year of full history from before the Mac was linked, plus everything since. Older messages come across only as scattered leftovers, so the oldest date on the Mac can read years back while the real history starts about a year before linking. That is far more than triage needs, since triage reads days. It is not an archive: anything older than about a year is only on the phone, and the phone route is how to reach it. `mac-desktop.md` Step M4 finds where the full history starts on that Mac and hands it to the user.
 
 **2. The privacy floor.**
 
@@ -90,10 +90,11 @@ Then route:
 | Mac, WhatsApp app signed in | `computer-prep.md`, then `mac-desktop.md` | about two minutes, no cable, **do not ask which phone they have, it does not matter** |
 | Mac, no WhatsApp app | offer installing it and signing in, then `mac-desktop.md` | usually still faster than a phone backup, and it is their choice, see `mac-desktop.md` Step M1 |
 | Mac, they would rather not link the Mac | `computer-prep.md`, then `android.md` or `iphone.md` | fine, take the phone route without arguing |
+| Mac, but they want messages older than about a year | `computer-prep.md`, then `android.md` or `iphone.md` | the Mac copy holds about a year, only the phone holds more, see `mac-desktop.md` |
 | Android, Windows | `computer-prep.md`, then `android.md` | cable transfer is the risky step |
 | iPhone, Windows | `computer-prep.md`, then `iphone.md` | least travelled path, flag this honestly to the user |
 
-**The mistake this table exists to prevent:** sending an Android user on a Mac to `android.md`. Their Mac holds the history already, and the phone route costs them an hour for the same file.
+**The mistake this table exists to prevent:** sending an Android user on a Mac to `android.md`. Their Mac already holds the last year of history, far more than triage reads, and the phone route costs them an hour for a file triage does not need.
 
 Everyone does `computer-prep.md` first. On a phone route, do not let an eager user skip ahead: half of all failures are on the computer side and are much cheaper to find before a 40 minute backup is in flight.
 
